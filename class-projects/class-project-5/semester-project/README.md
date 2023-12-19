@@ -1,381 +1,716 @@
-# Vježba 3: Dynamic Routing and component props
+# Vježba 6: CMS - Content Management System featuring Contentful
 
-U ovoj vježbi objasnit ćemo kako se koriste dinamičke rute i kako se podaci prenose iz jedne komponente u drugu koristeći **_props_**. Također ćemo proći korz pripremljeni kod za vježbu i objasniti njegovu strukturu.
+## Uvod
 
-Ako ste već prošli kroz vježbu 2, trebali biste imati strukturu sličnu ovoj, ali za svaki slučaj ovaj branch nam daje zajedničku početnu točku.
+Zamislite da imate novinsku agenciju u kojoj rade novinari. Svoj online portal napravili ste koristeći React i NextJS jer su to popularne tehnologije za web. Sada želite da novinari mogu sami dodati članke na portal. Osim ako novinari znaju React i NextJS, neće moći dodati članke. Kako riješiti ovaj problem?
 
-## Root Layout File
+Možete ih poslati kod nas na nastavu da nauče git, React i NextJS ili imati neko rješenje koje će im omogućiti da dodaju članke bez da znaju programirati (tada vjerojatno ni ne bi bili novinari). Treba moći i promijeniti tekst članka, dodati slike, izbrisati članke i, naravno, stvoriti novi članak. Zapravo ono što tražimo je nekakav sustav za upravljanje sadržajem (eng. Content Management System, CMS).
 
-Root layout ima navigaciju koju smo napravili zadnji put i još jedan novi dio: metadata object. Ovaj objekt sadrži informacije o stranici koje se koriste za SEO i druge stvari. U ovom slučaju, koristimo `title` i `description` za SEO, ali možete dodati i druge stvari kao što su `og:image` za Facebook i Twitter.
+Isti problem biste imali i da ste vlasnik online trgovine gdje želite upravljati artiklima koje prodajete. Ako ste dekan fakulteta onda treba dodavati profesore, studente, predmete, materijale...
+
+Očito, ovaj problem je dosta čest. Kad god je problem dosta čest, postoji gotovo i spremno rješenje. U ovom slučaju to je Contentful. Ali doći ćemo do toga.
+
+### Korak 1:
+
+Imamo novu stranicu na `/cms/projects` tako da moramo opet dodati novi unos u navigaciju:  
+ `{ href: "/cms/products", title: "Products" }`:
+
+```tsx
+// components/Navbar.tsx
+
+const pages: Page[] = [
+  { href: "/", title: "Home" },
+  { href: "/showcase", title: "Showcase" },
+  { href: "/blog", title: "Blog" },
+  { href: "/about", title: "About Us" },
+  { href: "/contact", title: "Contact Us" },
+  { href: "/signin", title: "Sign In" },
+  { href: "/cms/products", title: "Products" }, // new!
+];
+```
+
+> Commit here  
+> `git add . && git commit -m "Vjezba 6: Add Products page to Navbar"`
+
+### Korak 2:
+
+Primijetite strukturu cms stranice: `(contentfull)/cms/products`. Zašto zagrada? Jer želimo grupirati stvari pod contentful, ali ne želimo da to bude dio URL-a. Primijetimo da `cms` ulazi u URL i `products` također.
+
+Ako otvorimo novu stranicu vidimo nekoliko primjetnih proizvoda. Pogledajmo kod (glavni dio):
+
+```tsx
+const CmsPage: FC<SearchParams> = async ({ searchParams }) => {
+  const filteredProducts = searchParams._category
+    ? products.filter((product) => {
+        return product.categories?.some((category) => {
+          return category.label === searchParams._category;
+        });
+      })
+    : products;
+
+  return (
+    <main className="container flex flex-col items-center gap-10">
+      <h1 className="font-roboto-condensed text-6xl font-extrabold text-brand-purple-900 my-4">
+        Products
+      </h1>
+      <CategoryFilter categories={categories} />
+      <ul className="grid grid-cols-2 gap-8">
+        {filteredProducts.map((product) => {
+          return (
+            <li key={product.id}>
+              <ProductCard product={product} />
+            </li>
+          );
+        })}
+      </ul>
+    </main>
+  );
+};
+
+export default CmsPage;
+```
+
+Cidimo da producti dolaze odnekud:
+
+```tsx
+import { products, categories } from "./productList";
+```
+
+Ako otvorimo taj file vidimo da je to samo lista proizvoda i kategorija. U stvarnom projektu bi se ovo dohvaćalo iz baze podataka ili CMS-a, što je upravo ono što ćemo učiniti na današnjim vježbama.
+
+Ako kliknemo na Robota dobit ćemo details page. Ali, naravno prvo dobijemo error...
+Ovo je poznati error vezan za slike.
+
+Dodajmo novi host za slike `"images.ctfassets.net"` u next.config.js:
+
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    domains: [
+      "res.cloudinary.com",
+      "picsum.photos",
+      "via.placeholder.com",
+      "unsplash.com",
+      "source.unsplash.com",
+      "images.ctfassets.net",
+    ],
+  },
+};
+
+module.exports = nextConfig;
+```
+
+OK, sad imamo slike. Ali sadržaj izgleda čudno. Za ovaj tip rendera (rich-text) postoji Tailwind plugin.  
+Dodajmo ga u `tailwind.config.js`:
+
+```js
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  // ... ostaje isto
+  plugins: [require("@tailwindcss/typography")],
+};
+export default config;
+```
+
+Sad imamo slike i ispravan prikaz sadržaja. Ali sadržaj je lokalan... U sljedećem koraku dohvaćamo sadržaj sa Contentfula.
+
+> Commit here  
+> `git add . && git commit -m "Vjezba 6: Add image domain and TW plugin"`
+
+## Contentful
+
+Contentful je servis koji omogućava upravljanje sadržajem. Sadržajem se upravlja putem web sučelja ili kroz API. Sadržaj se može prikazati na web stranici, mobilnoj aplikaciji, IoT uređaju ili bilo kojem uređaju koji ima pristup internetu. Contentful je headless CMS, što znači da ne nudi gotovo rješenje za prikaz sadržaja. To je naš zadatak. Contentful nudi samo sučelje za upravljanje sadržajem i API za dohvaćanje sadržaja.
+
+### Osnove
+
+Za početak rada s Contentfulom trebat će nam račun. Najlakše je koristiti Github acc za login.
+Contentful je organiziran u :
+
+- **Space** - prostor u kojem se nalazi sadržaj. Nama treba samo jedan
+- **Content Model** - model sadržaja. Sjetite se tablica u SQL-u. Model bi bio sličan shemi SQL tablice.
+- **Content** - sadržaj. Sadržaj je instanca modela. Sadržaj je ono što se prikazuje na web stranici.
+
+Kako koristiti Contentful ostavljamo vama da istražite, ali budući da je namijenjen ljudima koji nisu programeri, ne bi trebalo biti preteško.  
+U nastavku ćemo se fokusirati na API.
+Jednom kad imate sadržaj koji želite prikazati, trebate ga dohvatiti. Za to će vam trebati ključ i ID vašeg prostora.
+
+<p text-align="center"><img src="./docs/api.png" /> </p>
+
+### Korak 3: Priprema Contentful klijenta
+
+Umjesto korištenja lokalnog sadržaja, sadržaj ćemo dohvatiti sa Contentfula. Prvo se pitamo što nam točno treba...
+Pogledajmo trenutni product interface:
 
 ```ts
-export const metadata: Metadata = {
-  title: "Next.js lab project",
-  description: "Next.js lab project",
+export interface TypeProductListItem {
+  id: string;
+  name: string;
+  description: string;
+  categories: TypeCategory[];
+  heroImage: string;
+}
+```
+
+Dakle treba nam lista produkata koja ima ime, id, opis, kategorije i sliku.
+Radimo GraphQL query u Contentfulu:
+
+```graphql
+query ProductList {
+  productCollection {
+    items {
+      sys {
+        id
+      }
+      name
+      description
+      heroImage {
+        url
+        title
+      }
+      categoriesCollection {
+        items {
+          label
+        }
+      }
+    }
+  }
+}
+```
+
+Za pisanje GraphQL querya koristimo Contentfulovo web sučelje: GraphQL playground. Možete ga naći pod App -> GraphQL Playground.
+
+<p><img src='./docs/gql.png' /></p>
+Ili pokušajte u terminalu:
+
+```
+curl 'https://graphql.contentful.com/content/v1/spaces/g853qxkqyatt/environments/master' -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Connection: keep-alive' -H 'DNT: 1' -H 'Origin: https://033bad1b-c8e2-4ee5-b8f8-f4c19c33ca37.ctfcloud.net' -H 'Authorization: Bearer aB2Y9knWfSQGbnzAT7nuIoM0iPZ-WXkI-2E4-cEZeCk' --data-binary '{"query":"query ProductList {\n  productCollection {\n    items {\n      sys {\n        id\n      }\n      name,\n      description,\n      heroImage {\n        url,\n        title\n      }\n      categoriesCollection {\n        items {\n          label\n        }\n      }\n    }\n  }\n}"}' --compressed
+```
+
+Testirajte na:  
+https://httpie.io/app
+
+Pod **Demo Content** možete naći GraphQL explorer za svoj projekt:
+https://www.contentful.com/developers/docs/tutorials/general/graphql/
+
+Getting started:
+https://www.contentful.com/blog/getting-started-with-contentful-and-graphql/
+
+Good luck 🫡
+
+U svakom slučaju vidimo neki rezultat, znači da query radi kako treba.  
+Napišimo sad jednostavan servis. U `lib/contentfulClient.ts` dodajmo file ``:
+
+```ts
+const gqlAllProductsQuery = `query ProductList {
+  productCollection {
+    items {
+      sys {
+        id
+      }
+      name,
+      description,
+      heroImage {
+        url,
+        title
+      }
+      categoriesCollection {
+        items {
+          label
+        }
+      }
+    }
+  }
+}`;
+
+interface ProductCollectionResponse {
+  productCollection: {
+    items: ProductItem[];
+  };
+}
+
+interface ProductItem {
+  sys: {
+    id: string;
+  };
+  name: string;
+  description: string;
+  heroImage: {
+    url: string;
+    title: string;
+  };
+  categoriesCollection: {
+    items: {
+      label: TypeCategory["label"];
+    }[];
+  };
+}
+```
+
+### Korak 4: GetAllProducts funkcija
+
+Napišimo funkciju koja nam daje sve produkte. Prvo, dodajmo `baseUrl`:
+
+```ts
+const baseUrl = `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/master`;
+```
+
+Primijetimo `process.env`. Što je to?
+
+`CONTENTFUL_SPACE_ID` je enviroment varijabla (nalazi se na `env` objektu processa). Takve varijable služe
+za vrijednosti koje ne želimo u kodu, ali želimo ih mijenjati. Dobar primjer su passwordi, API ključevi, portovi, URL-ovi na backendu i sl.
+
+U našem slučaju, `CONTENTFUL_SPACE_ID` je ID našeg prostora. Treba nam i API ključ. Dodajmo ga u `.env.local`.
+Ako file ne postoji dodajte ga. Primijetite da git ne vidi promjenu u tom fileu. To je zato što je `.env.local` na `.gitignore` listi. To je dobro jer ne želimo da se API ključevi i slično nalaze u git repozitoriju.
+
+```
+CONTENTFUL_SPACE_ID=g853qxkqyatt
+CONTENTFUL_ACCESS_TOKEN=aB2Y9knWfSQGbnzAT7nuIoM0iPZ-WXkI-2E4-cEZeCk
+```
+
+Napišimo funkciju `getAllProducts` koja nam vraća sve produkte. Ima sljedeći potpis:
+
+```ts
+const getAllProducts = async (): Promise<TypeProductListItem[]>
+```
+
+Par uputa:
+
+- `fetch` je funkcija koja šalje HTTP zahtjev. U našem slučaju GraphQL query.
+- Metoda je `POST`. Metoda za GraphQL je uvijek `POST` i query je uvijek `query`
+- Zadan je return type: `ProductCollectionResponse`, trebamo ga samo mapirati na `TypeProductListItem`
+- Auth header je tipa `Bearer` i treba mu API ključ (`CONTENTFUL_ACCESS_TOKEN`, `Authorization: Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`)
+
+Rješenje je ispod u detaljima.
+
+<details>
+<summary>Rješenje</summary>
+
+```ts
+const getAllProducts = async (): Promise<TypeProductListItem[]> => {
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({ query: gqlAllProductsQuery }),
+    });
+
+    // Get the response as JSON, cast as ProductCollectionResponse
+    const body = (await response.json()) as {
+      data: ProductCollectionResponse;
+    };
+
+    // Map the response to the format we want
+    const products: TypeProductListItem[] =
+      body.data.productCollection.items.map((item) => ({
+        id: item.sys.id,
+        name: item.name,
+        description: item.description,
+        heroImage: item.heroImage.url,
+        categories: item.categoriesCollection.items.map((category) => category),
+      }));
+
+    return products;
+  } catch (error) {
+    console.log(error);
+
+    return [];
+  }
 };
 ```
 
-Druga zanimljiva stvar je _pages_ varijabla i `Object.entries` nad tom varijablom:
+</details>
+
+Dodajmo export za svoju funkciju:
+
+```ts
+const contentfulService = {
+  getAllProducts,
+};
+
+export default contentfulService;
+```
+
+> Commit here  
+> `git add . && git commit -m "Vjezba 6: Add Contentful client and getAllProducts function"`
+
+### Korak 5: Dohvat kategorija
+
+Na isti način možemo dohvatiti i kategorije. Napišimo funkciju `getAllCategories` koja vraća sve kategorije. Ima sljedeći potpis:
+
+```ts
+const getAllCategories = async (): Promise<TypeCategory[]>
+```
+
+Treba nam i query:
+
+```ts
+const getAllCategoriesQuery = `query {
+  categoryCollection {
+    items {
+      label
+      }
+    }
+  }`;
+```
+
+Rješenje je ispod u detaljima.
+
+<details>
+<summary>Category Rješenje</summary>
+
+```ts
+const getAllCategories = async (): Promise<TypeCategory[]> => {
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({ query: getAllCategoriesQuery }),
+    });
+    const body = (await response.json()) as {
+      data: CategoryCollectionResponse;
+    };
+
+    const categories: TypeCategory[] = body.data.categoryCollection.items.map(
+      (item) => ({
+        label: item.label,
+      })
+    );
+
+    return categories;
+  } catch (error) {
+    console.log(error);
+
+    return [];
+  }
+};
+```
+
+</details>
+<br/>
+
+Dodajmo export za svoju funkciju:
+
+```ts
+const contentfulService = {
+  getAllProducts,
+  getAllCategories,
+};
+```
+
+> Commit here  
+> `git add . && git commit -m "Vjezba 6: Add getAllCategories function"`
+
+### Korak 6: Korištenje Contentful servisa
+
+Sad kad imamo servis, možemo ga koristiti. U `apps/(contentfull)/cms/products.tsx` više ne trebamo import statičnih podataka:
 
 ```tsx
-const pages = {
-  home: "/",
-  showcase: "/showcase",
-  blog: "/blog",
-  about: "/about",
-  contact: "/contact",
-};
+// import { products, categories } from "./productList";
+import contentfulService from "@/lib/contentfulClient";
 
 // ...
 
-<ul className="flex gap-8">
-  {Object.entries(pages).map(([name, path]) => (
-    <li key={name}>
-      <Link href={path}>{name}</Link>
-    </li>
-  ))}
-</ul>;
-```
+const CmsPage: FC<SearchParams> = async ({ searchParams }) => {
+  const products = await contentfulService.getAllProducts();
+  const categories = await contentfulService.getAllCategories();
 
-`Object.entries` je jedna od mnogih temeljnih funkcija za rad sa Javascript jezikom. Među njima su i `Array.map`, `Array.filter`, `Array.reduce` i mnoge druge. Ove funkcije su vrlo korisne i trebali biste ih znati koristiti. U ovom slučaju, `Object.entries` vraća niz parova ključ/vrijednost iz objekta. Ovaj niz možemo mapirati (koristeći `.map()`) i tako dinamički prikazati navigaciju.
+  // const [products, categoris] = await Promise.all([
+  //   contentfulService.getAllProducts(),
+  //   contentfulService.getAllCategories(),
+  // ]);
 
-```js
-const object1 = {
-  a: "somestring",
-  b: 42,
-};
-
-Object.entries(object1).map((keyValuePair) => {
-  console.log(keyValuePair);
-  //1. ["a", "somestring"]
-  //2. ["b", 42]
-  const [key, value] = keyValuePair;
-  console.log(key);
-  //1. "a"
-  //2. "b"
-  console.log(value);
-  //1. "somestring"
-  //2. 42
-});
-```
-
-## Dynamic Routing
-
-Sve rute koje vidimo sad su statičke. To znači da su sve rute definirane u `app` direktoriju i da se ne mogu mijenjati. U stvarnom svijetu, to nije uvijek slučaj. Ponekad želimo da se rute dinamički generiraju na temelju podataka koje dobivamo iz baze podataka ili nekog drugog izvora. U ovom slučaju, želimo da se podatci u ruti stvaraju na temelju odgovora sa API-a.
-
-U NextJS 13 to radimo tako da stvaramo folder koji u nazivu ima `[]`. U ovom slučaju, to je `app/blog/[postId]/page.tsx`. Naziv `postId` je proizvoljan i može biti bilo što. Ono što je bitno je da se u tom folderu nalazi `page.tsx` datoteka. Ova datoteka će se koristiti za prikazivanje podataka za svaki `postId` koji dobijemo. Uz taj folder, moramo napraviti i `page.tsx` datoteku koja će se koristiti za prikazivanje svih postova i linkat će na svaki pojedinačni post.
-
-Prevedeno u navigaciju ako idemo na
-`/blog/` pogađamo `blog` root tj. `page.tsx` koji stoji pored foldera `[postId]`
-
-Ako idemo na `/blog/1` pogađamo `[postId]` folder i `page.tsx` koji stoji u njemu.
-Ali kako ta stranica zna koji smo `postId` poslali? To je ono što ćemo objasniti u nastavku.
-
-## React Props
-
-Props je kratica za properties i koristi se za prijenos podataka iz jedne komponente u drugu. Budući da su sve React komponente zapravo funkcije, **_props_** su parametri tih funkcija. To znači da su i `page.tsx` stranice isto funkcije. Next koristi tu činjenicu i **_props_** za prijenos podataka u `blog/[postId]/page.tsx` stranicu.
-
-## Početak rada
-
-Krenimo s radom!
-
-### Korak 1: Stvaranje `blog/[pageId]` stranice
-
-U `/blog` folderu stvaramo novi podfolder `[pageId]` i u njemu `page.tsx` datoteku. U `page.tsx` datoteku kopiramo sljedeći kod:
-
-```tsx
-interface Params {
-  postId: string;
-}
-
-export interface BlogPostParams {
-  params: Params;
-}
-
-export default function BlogPost({ params }: BlogPostParams) {
-  return (
-    <main className="flex min-h-screen flex-col items-center p-10">
-      <h1 className="text-3xl font-bold p-10">Post #{params.postId}</h1>
-    </main>
-  );
-}
-```
-
-Ako idemo na `/blog/1` trebali bi vidjeti `Post #1` na ekranu.
-
-> ℹ️ Dobra točka za napraviti commit!  
-> `git add .`  
-> `git commit -m "Vjezba 3: Create blog/[postId]/page.tsx"`
-
-### Korak 2: Stvaranje `blog/page.tsx` stranice sa linkovima
-
-U `/blog` modificiramo `page.tsx` datoteku tako da linka na svaki pojedinačni post. To bi nam trebalo biti poznato budući da smo to radili u vježbi 2 u `layout.tsx` datoteci. U `page.tsx` datoteku kopiramo sljedeći kod:
-
-```tsx
-import Link from "next/link";
-
-export const metadata = {
-  title: "Blog",
-};
-
-const posts = [12, 3, 56, 7, 89];
-
-export default function Blog() {
-  return (
-    <main className="flex min-h-screen flex-col items-center p-10">
-      <h1 className="text-3xl font-bold p-10">Blog Page</h1>
-      <ul className="flex flex-col gap-8">
-        {posts.map((postId) => (
-          <li key={postId}>
-            <Link href={`blog/${postId}`}>Post {postId}</Link>
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
-}
-```
-
-Primijetite da opet koristimo `.map()` 🙂
-
-Ako idemo na `/blog` trebali bi vidjeti listu linkova na svaki pojedinačni post.
-
-> ℹ️ Dobra točka za napraviti commit!  
-> `git add .`  
-> `git commit -m "Vjezba 3: Create blog/page.tsx"`
-
-### Korak 3: Koristimo API za dohvaćanje podataka
-
-Meet https://jsonplaceholder.typicode.com! Ovo je API koji vraća dummy podatke. U ovom slučaju, koristit ćemo `/posts` endpoint koji vraća listu objekata koji predstavljaju postove. Svaki post ima `id`, `title`, `body` i `userId` polja. Mi ćemo koristiti `id` i `title` polja za prikazivanje podataka.
-
-Trrebamo napraviti dvije promjene u kodu:
-
-1. u `blog/page.tsx` umjesto zakucanih postova dohvaćamo podatke sa API-a i onda njih linkamo
-2. u `blog/[postId]/page.tsx` umjesto zakucanog posta dohvaćamo podatke sa API-a i onda ih prikazujemo. Koristimo `postId` za dohvat ispravnog posta
-
-U `blog/page.tsx` datoteku kopiramo sljedeći kod:
-
-```tsx
-import Link from "next/link";
-
-export interface Post {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
-
-const BASE_API_URL = "https://jsonplaceholder.typicode.com";
-
-const getPosts = async (): Promise<Post[]> => {
-  const data = await fetch(`${BASE_API_URL}/posts`);
-  return data.json();
-};
-
-export default async function Blog() {
-  const posts = await getPosts();
-  return (
-    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-      <h1 className="text-3xl font-bold p-10">Blog Index Page</h1>
-      <ul className="flex flex-col gap-8">
-        {posts.map((post) => (
-          <li key={post.id}>
-            <Link href={`blog/${post.id}`}>
-              <span className="text-2xl text-purple-500">
-                Post {post.title}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
-}
-```
-
-U `blog/[postId]/page.tsx` datoteku kopiramo sljedeći kod:
-
-```tsx
-import { Post } from "../page";
-
-interface Params {
-  postId: string;
-}
-
-const BASE_API_URL = "https://jsonplaceholder.typicode.com";
-
-const getPost = async (id: string): Promise<Post> => {
-  const data = await fetch(`${BASE_API_URL}/posts/${id}`);
-  return data.json();
-};
-
-export default async function BlogPost({ params }: { params: Params }) {
-  const post = await getPost(params.postId);
+  const filteredProducts = searchParams._category
+    ? products.filter((product) => {
+        return product.categories?.some((category) => {
+          return category.label === searchParams._category;
+        });
+      })
+    : products;
 
   return (
-    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-      <h1 className="text-3xl font-bold p-10 capitalize">
-        <span className="text-neutral-400">Post {post.id}:</span> {post.title}
+    <main className="container flex flex-col items-center gap-10">
+      <h1 className="font-roboto-condensed text-6xl font-extrabold text-brand-purple-900 my-4">
+        Products
       </h1>
-      <p className="text-xl p-10">{post.body}</p>
+      <CategoryFilter categories={categories} />
+      <ul className="grid grid-cols-2 gap-8">
+        {filteredProducts.map((product) => {
+          return (
+            <li key={product.id}>
+              <ProductCard {...product} />
+            </li>
+          );
+        })}
+      </ul>
     </main>
   );
-}
+};
+
+export default CmsPage;
 ```
 
-Ako idemo na `/blog` trebali bi vidjeti listu linkova na svaki pojedinačni post. Ako idemo na `/blog/1` trebali bi vidjeti podatke za post 1.
+> Commit here
+> `git add . && git commit -m "Vjezba 6: Use Contentful service to get products and categories"`
 
-> ℹ️ Dobra točka za napraviti commit!
-> `git add .` > `git commit -m "Vjezba 3: Use API to fetch data"`
+### Korak 7: Dohvat pojedinog proizvoda
 
-### Korak 4: Paginacija
+Sad kad imamo listu proizvoda, možemo dohvatiti i pojedini proizvod. Napišimo funkciju `getProductById` koja vraća proizvod po ID-u. Ima sljedeći potpis:
 
-Dodat ćemo jednostavnu komponentu za paginaciju koja će nam omogućiti da se krećemo kroz postove.  
-Na taj način nećemo imati svih 100 postova na jednoj stranici.  
-Paginacija se sastoji od 3 dijela:
+```ts
+const getProductById = async (id: string): Promise<TypeProductDetailItem>
+```
 
-- ukupan broj postova
-- trenutna stranica
-- broj postova po stranici
+Treba nam i query. Query ovaj put ima i **varijablu** i to `productid`. Varijabla se definira na početku querya i koristi se u queryu. Varijabla se definira sa `$` i tipom. U našem slučaju je to `String`. Varijabla se koristi sa `$` i imenom varijable. U našem slučaju `$productId`. Uskličnik `!` znači da je varijabla obavezna.
 
-Sa te tri informacije možemo stvoriti paginaciju koja će nam omogućiti da se krećemo kroz postove.
+```ts
+const gqlProductByIdQuery = `query GetProductById($productId: String!) {
+  product(id: $productId) {
+    name
+    price
+    description
+    currencyCode
+    listed
+    heroImage {
+      url
+    }
+    categoriesCollection {
+      items {
+        label
+      }
+    }
+    imagesCollection {
+      items {
+        url
+      }
+    }
+  }
+}
+`;
+```
 
-#### Ukupan broj postova
+Još par dodataka:
 
-Prvo ćemo dohvatiti ukupan broj postova. Na sreću, API nam to omogućava.
-Ako zatražimo `/posts` endpoint, dobit ćemo listu postova i `headers` objekt koji sadrži `x-total-count` polje koje nam govori koliko postova ima ukupno. Da ne radimo data transfer samo da bismo dobili header, koristimo HEAD http metodu koja vraća samo header.
+- Kad imamo varijablu, fetch mora imati `variables` property. U našem slučaju je to `{ productId: id }`
 
-#### Trenutna stranica i broj postova po stranici
+Sadržaj unutar rich texta nas ne zanima.
 
-Ova dva parametra su pod našom kontrolom i stavljamo ih u query string. Srećom, NextJS nam daje query string na serveru! Ne treba nam promjena query-ija ovisna o akciji korisnika pa nam to dosta pojednostavljuje stvari.
+```ts
+const getProductById = async (
+  id: string
+): Promise<TypeProductDetailItem | null> => {
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
+        query: gqlProductByIdQuery,
+        variables: { productId: id },
+      }),
+    });
+
+    const body = (await response.json()) as {
+      data: DetailProductResponse;
+    };
+
+    const responseProduct = body.data.product;
+
+    const product: TypeProductDetailItem = {
+      id: id,
+      name: responseProduct.name,
+      images: responseProduct.imagesCollection.items.map((item) => item.url),
+      price: responseProduct.price,
+      currencyCode: responseProduct.currencyCode,
+      listed: responseProduct.listed,
+      description: responseProduct.description,
+      categories: responseProduct.categoriesCollection.items.map((c) => c),
+      heroImage: responseProduct.heroImage.url,
+    };
+
+    return product;
+  } catch (error) {
+    console.log(error);
+
+    return null;
+  }
+};
+```
+
+Dodajmo export za svoju funkciju:
+
+```ts
+const contentfulService = {
+  getAllProducts,
+  getAllCategories,
+  getProductById,
+};
+```
+
+Primijenimo funkciju u `apps/(contentfull)/cms/product/[id].tsx`:
 
 ```tsx
-import Link from "next/link";
-import clsx from "clsx";
+import contentfulService from "@/lib/contentfulClient";
+// ...
+const ProductPage = async ({ params }: { params: Params }) => {
+  const product = await contentfulService.getProductById(params.productId);
 
-export interface Post {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
-
-interface Pagination {
-  limit: number;
-  page: number;
-}
-
-const BASE_API_URL = "https://jsonplaceholder.typicode.com";
-
-const getPosts = async (
-  pagination: Pagination = {
-    limit: 9999,
-    page: 1,
+  if (!product) {
+    return <div>Product not found</div>;
   }
-): Promise<Post[]> => {
-  const data = await fetch(
-    `${BASE_API_URL}/posts?_limit=${pagination.limit}&_page=${pagination.page}`
-  );
-  return data.json();
-};
-
-const getTotalPosts = async (): Promise<number> => {
-  const response = await fetch(`${BASE_API_URL}/posts?_limit=1`, {
-    method: "HEAD",
-  });
-  // get x-total-count header
-  return parseInt(response.headers.get("x-total-count") || "1", 10);
-};
-
-export default async function Blog({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
-  const { _limit, _page } = searchParams;
-  const [pageSize, page] = [_limit, _page].map(Number);
-  const totalPosts = await getTotalPosts();
-  const totalPages = Math.ceil(totalPosts / pageSize);
-
-  const posts = await getPosts({
-    limit: pageSize,
-    page: page,
-  });
 
   return (
-    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-      <h1 className="text-3xl font-bold p-10">Blog Index Page</h1>
-
-      {_limit && _page && (
-        <div className="flex items-baseline gap-8 pb-10">
-          <div>
-            Page {page} of {totalPages}
+    <main className="container flex flex-col items-center gap-10 mb-10">
+      <h1 className="font-roboto-condensed text-6xl font-extrabold text-brand-purple-900 my-4">
+        {product?.name}
+      </h1>
+      <div className="grid grid-cols-2 gap-4 w-3/4 relative">
+        <Badge className="absolute top-4 left-4 z-40" variant="entertainment">
+          {product.currencyCode && currencySymbolMapping[product.currencyCode]}
+          {product.price}
+        </Badge>
+        <HeroImage
+          image={product?.heroImage}
+          productName={product.name}
+          className="w-full h-[400px]"
+        />
+        <div className="flex flex-col gap-4 justify-between">
+          <div className="grid grid-cols-2 gap-2">
+            {product.images?.map((image) => (
+              <div key={image} className="relative w-full h-32">
+                <Image
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded-md"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  src={image as string}
+                  alt={product.name as string}
+                />
+              </div>
+            ))}
           </div>
-          <div className="flex gap-4">
-            <Link
-              href={{
-                pathname: "/blog",
-                query: { _page: 1, _limit: pageSize },
-              }}
-              className="rounded border bg-gray-100 px-3 py-1 text-gray-800"
-            >
-              First
-            </Link>
-            <Link
-              href={{
-                pathname: "/blog",
-                query: { _page: page > 1 ? page - 1 : 1, _limit: pageSize },
-              }}
-              className={clsx(
-                "rounded border bg-gray-100 px-3 py-1 text-gray-800",
-                page === 1 && "pointer-events-none opacity-50"
-              )}
-            >
-              Previous
-            </Link>
-            <Link
-              href={{
-                pathname: "/blog",
-                query: { _page: page + 1, _limit: pageSize },
-              }}
-              className={clsx(
-                "rounded border bg-gray-100 px-3 py-1 text-gray-800",
-                page === totalPages && "pointer-events-none opacity-50"
-              )}
-            >
-              Next
-            </Link>
-            <Link
-              href={{
-                pathname: "/blog",
-                query: { _page: totalPages, _limit: pageSize },
-              }}
-              className="rounded border bg-gray-100 px-3 py-1 text-gray-800"
-            >
-              Last
-            </Link>
+          <div className="flex flex-col">
+            <div className="mb-2">{product.description}</div>
+            <Button variant="emph">+ Add to cart </Button>
           </div>
         </div>
-      )}
-
-      <ul className="flex flex-col gap-8">
-        {posts.map((post) => (
-          <li key={post.id}>
-            <Link href={`blog/${post.id}`}>
-              <span className="text-2xl text-purple-500">
-                Post {post.title}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      </div>
+      {/* <div
+        className="mt-10 prose prose-h1:text-brand-purple-800"
+        dangerouslySetInnerHTML={{
+          __html: documentToHtmlString(product?.richTextDescription?.json),
+        }}
+      /> */}
+      <div className="mt-10 prose prose-h1:text-brand-purple-800">
+        {documentToReactComponents(
+          product.richTextDescription?.json,
+          renderOptions(product.richTextDescription?.links)
+        )}
+      </div>
     </main>
   );
-}
+};
+
+export default ProductPage;
 ```
 
-Ako idemo na `/blog` trebali bi vidjeti listu linkova na svaki pojedinačni post. Ako idemo na `/blog?_page=1&_limit=10` trebali bi vidjeti listu linkova na svaki pojedinačni post i paginaciju.
+> Commit here  
+> `git add . && git commit -m "Vjezba 6: Add getProductById function"`
 
-> ℹ️ Dobra točka za posljednji commit!  
-> `git add .`  
-> `git commit -m "Vjezba 3: Add pagination"`
+### Korak 8: Dodajmo rich text description
+
+Za potpuni prikaz nedostaje nam još samo rich text description. Dodajmo ga u clijentu:
+
+```ts
+const gqlProductByIdQuery = `query GetProductById($productId: String!) {
+  product(id: $productId) {
+    name
+    price
+    description
+    currencyCode
+    listed
+    heroImage {
+      url
+    }
+    categoriesCollection {
+      items {
+        label
+      }
+    }
+    imagesCollection {
+      items {
+        url
+      }
+    }
+    richTextDescription {
+      json
+      links {
+        entries {
+          __typename
+          block {
+            sys {
+              id
+            }
+            ... on CodeBlockSection {
+              __typename
+              title
+              language
+              content
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+// ...
+
+interface DetailProductResponse {
+  // --
+  richTextDescription: {
+    json: any;
+    links: any;
+  };
+  // --
+}
+
+// ...
+
+const product: TypeProductDetailItem = {
+  id: id,
+  name: responseProduct.name,
+  images: responseProduct.imagesCollection.items.map((item) => item.url),
+  richTextDescription: responseProduct.richTextDescription, // <-- NEW!
+  price: responseProduct.price,
+  currencyCode: responseProduct.currencyCode,
+  listed: responseProduct.listed,
+  description: responseProduct.description,
+  categories: responseProduct.categoriesCollection.items.map((c) => c),
+  heroImage: responseProduct.heroImage.url,
+};
+```
+
+Kako radi rich text description?
+Primjer koji je dan ovdje prati Contentfulov primjer:
+https://www.contentful.com/developers/docs/javascript/tutorials/rendering-contentful-rich-text-with-javascript/
+
+Pronađite section za **React**
+
+> ⚠️ Rich text može biti zahtjevan za implementaciju. Ako vam ne treba, nemojte ga koristiti. Savjetujemo da napravite model bez rich texta. Jednom kad pohvatate konce, možete dodati i rich text. Ako što zapne, naravno, javite 🙂
+
+> Commit here  
+> `git add . && git commit -m "Vjezba 6: Add rich text description"`
+
+Toliko od nas

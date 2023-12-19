@@ -1,21 +1,37 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Inter } from "next/font/google";
+import clsx from "clsx";
+import {
+  Inter,
+  Roboto,
+  Roboto_Condensed,
+  Playfair_Display,
+} from "next/font/google";
+import NavBar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
-// Get this info from some external source (e.g. CMS)
-const pages = {
-  Home: "/",
-  Recipes: "/Recipes",
-  Diet: "/Diet",
-  About: "/About",
-  LogIn: "/LogIn",
-};
-
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const roboto = Roboto({
+  weight: ["400"],
+  subsets: ["latin"],
+  variable: "--font-roboto",
+});
+const roboto_condensed = Roboto_Condensed({
+  weight: ["300", "700"],
+  subsets: ["latin"],
+  variable: "--font-roboto-condensed",
+});
+const playfairDisplay = Playfair_Display({
+  weight: ["400", "800"],
+  subsets: ["latin"],
+  variable: "--font-playfair",
+});
 
 export const metadata: Metadata = {
-  title: "Next.js lab project",
+  title: {
+    template: "Lab project | %s",
+    default: "Lab project",
+  },
   description: "Next.js lab project",
 };
 
@@ -25,18 +41,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={clsx(
+        roboto.variable,
+        roboto_condensed.variable,
+        playfairDisplay.variable
+      )}
+    >
       <body className={inter.className}>
-        <nav className="flex items-center justify-center p-4">
-          <ul className="flex gap-8">
-            {Object.entries(pages).map(([name, path]) => (  // za stranice, njihovo linkanje
-              <li key={name}>
-                <Link href={path}>{name}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <NavBar />
         {children}
+        <Footer />
       </body>
     </html>
   );
