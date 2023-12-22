@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Dropdown from "./dropdown";
 
 // Get this info from some external source (e.g. CMS)
 const pages = {
   Home: "/",
-  Recipes: "/Recipes",
-  Diet: "/Diet",
-  About: "/About",
+  Recipes: "/recipes",
+  Diet: "/diet",
+  About: "/about",
   LogIn: "/LogIn",
 };
 
@@ -31,7 +32,9 @@ export default function RootLayout({
           <ul className="flex gap-8">
             {Object.entries(pages).map(([name, path]) => (  // za stranice, njihovo linkanje
               <li key={name}>
-                <Link href={path}>{name}</Link>
+                {name === 'Recipes' ? 
+                (<Dropdown name = {name} />):
+                (<Link href={path}>{name}</Link>)}
               </li>
             ))}
           </ul>
