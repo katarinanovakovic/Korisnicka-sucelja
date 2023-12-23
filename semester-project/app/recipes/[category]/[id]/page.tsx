@@ -1,12 +1,12 @@
+import Recipes from "../../page";
 import { Recipe } from "../page";
 import React from "react";
-
 interface Params {
-  id: string; // Adjust the parameter name to match the dynamic folder naming
+  id: string; 
 }
 
 const getRecipe = async (id: string): Promise<Recipe> => {
-  const data = await import("../../json/recipes.json");
+  const data = await import("../../../json/recipes.json");
   const recipes: Recipe[] = data.recipes;
   const recipe = recipes.find((recipe) => recipe.id.toString() === id);
   if (!recipe) {

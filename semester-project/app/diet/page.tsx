@@ -22,7 +22,7 @@ export default async function Diet() {
       <ul className="flex flex-col gap-8">
         {posts.map((post) => (
           <li key={post.id}>
-            <Link href={`Diet/${post.id}`}>
+            <Link href={`diet/${post.id}`}>
               <span className="text-2xl text-purple-500">
                 Post {post.title}
               </span>

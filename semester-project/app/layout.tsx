@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Dropdown from "./dropdown";
+import Recipes from "./recipes/page"; 
 
 // Get this info from some external source (e.g. CMS)
 const pages = {
@@ -33,7 +33,7 @@ export default function RootLayout({
             {Object.entries(pages).map(([name, path]) => (  // za stranice, njihovo linkanje
               <li key={name}>
                 {name === 'Recipes' ? 
-                (<Dropdown name = {name} />):
+                (<Recipes name = "Recipes"/>):
                 (<Link href={path}>{name}</Link>)}
               </li>
             ))}
