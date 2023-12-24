@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Recipes from "./recipes/page"; 
+import Dropdown from "./dropDown/page"; 
 
-// Get this info from some external source (e.g. CMS)
 const pages = {
   Home: "/",
-  Recipes: "/recipes",
+  Recipes: "/recipes/all",
   Diet: "/diet",
   About: "/about",
   LogIn: "/LogIn",
@@ -30,10 +29,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <nav className="flex items-center justify-center p-4">
           <ul className="flex gap-8">
-            {Object.entries(pages).map(([name, path]) => (  // za stranice, njihovo linkanje
+            {Object.entries(pages).map(([name, path]) => (
               <li key={name}>
                 {name === 'Recipes' ? 
-                (<Recipes name = "Recipes"/>):
+                (<Dropdown/>):
                 (<Link href={path}>{name}</Link>)}
               </li>
             ))}

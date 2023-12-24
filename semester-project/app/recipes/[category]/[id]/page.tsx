@@ -1,54 +1,74 @@
-import Recipes from "../../page";
-import { Recipe } from "../page";
-import React from "react";
+'use client'
+import React, { useState, useEffect } from 'react';
+
 interface Params {
-  id: string; 
+  category: string;
 }
 
-const getRecipe = async (id: string): Promise<Recipe> => {
-  const data = await import("../../../json/recipes.json");
-  const recipes: Recipe[] = data.recipes;
-  const recipe = recipes.find((recipe) => recipe.id.toString() === id);
-  if (!recipe) {
-    throw new Error("Recipe not found");
-  }
-  return recipe;
-};
-
-export default async function RecipesDetail({ params }: { params: Params }) {
-  try {
-    const recipe = await getRecipe(params.id);
-
-    return (
-      <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <h1 className="text-3xl font-bold p-10 capitalize">
-          <span className="text-neutral-400">Recipe {recipe.id}:</span> {recipe.name}
-        </h1>
-        <p className="text-xl p-10">{recipe.ingredients.map((ingredient, index) => (
-          <React.Fragment key={index}>
-            {ingredient}
-            {index !== recipe.ingredients.length - 1 && <br />}
-          </React.Fragment>
-        ))}
-      </p>
-      <p className="text-xl p-10">{recipe.instructions.map((instruction, index) => (
-          <React.Fragment key={index}>
-            {instruction}
-            {index !== recipe.instructions.length - 1 && <br />}
-          </React.Fragment>
-        ))}
-      </p>
-      </main>
-    );
-  } catch (error) {
-    console.error(error);
-    return (
-      <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <h1 className="text-3xl font-bold p-10 capitalize">
-          Post Not Found
-        </h1>
-      </main>
-    );
-  }
+export interface RecipesCategoriesParams {
+  params: Params;
 }
 
+interface RecipeFields {
+  id: number;
+  name: string;
+  category: string[];
+  ingredients: string[];
+  instructions: string;
+}
+
+interface Recipe {
+  sys: {
+    id: string;
+  };
+  fields: RecipeFields;
+}
+
+const contentful = require('contentful');
+
+const client = contentful.createClient({
+  space: 'c2epmrmqiqap',
+  accessToken: 'SsS4a0T3sfF4NpTF4xhqPGL1OHjwgiN2f72YHtTbL8s',
+});
+
+const BASE_API_URL = 'https://api.eu.contentful.com';
+
+export default function RecipsDetails({ params }: RecipesCategoriesParams) {
+  const [entries, setEntries] = useState<Recipe[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await client.getEntries({
+          content_type: 'recipe',
+        }) as { items: Recipe[] };
+
+        setEntries(response.items);
+      } catch (error) {
+        console.error('Error fetching entries:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
+      {entries.map((entry) => (
+        <div key={entry.sys.id}>
+          <h1 className="text-3xl font-bold p-10 capitalize">
+            <span className="text-neutral-400">Recipe {entry.fields.id}:</span> {entry.fields.name}
+          </h1>
+          <p className="text-xl p-10">{entry.fields.ingredients.map((ingredient, index) => (
+            <React.Fragment key={index}>
+              {ingredient}
+              {index !== entry.fields.ingredients.length - 1 && <br />}
+            </React.Fragment>
+          ))}
+          </p>
+          <p className="text-xl p-10">{entry.fields.instructions}</p>
+        </div>
+      ))}
+    </main>
+  );
+}
