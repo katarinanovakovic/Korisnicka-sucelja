@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
-import SearchBox from "../../searchBox/page";
+import SearchBox from "../../searchbox/page";
 import FilterBox from "../../filterBox/page";
 
 interface Params {
@@ -59,7 +59,6 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
   
     // Filter entries based on selected filters
     const filtered = entries
-      .filter(entry => entry.fields.category.includes(params.category))
       .filter(entry => diets.length === 0 || entry.fields.diet.some(diet => diets.includes(diet)))
       .filter(entry => !difficulty || entry.fields.difficulty === difficulty)
       .filter(entry => maxCookingTime === 0 || entry.fields.cookingTime <= maxCookingTime);
@@ -103,6 +102,7 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
       <br></br>
       <ul className="flex flex-col gap-8">
         {filteredEntries
+        .filter(entry => entry.fields.category.includes(params.category))
         .filter(entry => entry.fields.name.toLowerCase().includes(searchQuery.toLowerCase()))
         .map(entry => (
           <li key={entry.fields.id}>
