@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 interface Params {
-  category: string;
+  id: number;
 }
 
 export interface RecipesCategoriesParams {
@@ -34,27 +34,40 @@ const client = contentful.createClient({
 const BASE_API_URL = 'https://api.eu.contentful.com';
 
 export default function RecipsDetails({ params }: RecipesCategoriesParams) {
-  const [entries, setEntries] = useState<Recipe[]>([]);
+  const [entry, setEntry] = useState<Recipe | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await client.getEntries({
           content_type: 'recipe',
+          'sys.id': params.id.toString(), // Filter by the specified ID
         }) as { items: Recipe[] };
 
-        setEntries(response.items);
+        if (response.items.length > 0) {
+          setEntry(response.items[0]); // Set the first matching entry
+        } else {
+          console.warn(`Recipe with ID ${params.id} not found.`);
+        }
       } catch (error) {
-        console.error('Error fetching entries:', error);
+        console.error('Error fetching entry:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [params.id]); // Trigger the effect when the ID changes
+
+  if (!entry) {
+    return (
+      <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
+        <p>Loading...</p>
+      </main>
+    );
+  }
+
 
   return (
     <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-      {entries.map((entry) => (
         <div key={entry.sys.id}>
           <h1 className="text-3xl font-bold p-10 capitalize">
             <span className="text-neutral-400">Recipe {entry.fields.id}:</span> {entry.fields.name}
@@ -68,7 +81,6 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
           </p>
           <p className="text-xl p-10">{entry.fields.instructions}</p>
         </div>
-      ))}
     </main>
   );
 }

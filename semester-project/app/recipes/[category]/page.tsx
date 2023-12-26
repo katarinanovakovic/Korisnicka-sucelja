@@ -105,8 +105,8 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
         .filter(entry => entry.fields.category.includes(params.category))
         .filter(entry => entry.fields.name.toLowerCase().includes(searchQuery.toLowerCase()))
         .map(entry => (
-          <li key={entry.fields.id}>
-            <Link href={`/recipes/${params.category}/${entry.fields.id}`}>
+          <li key={entry.sys.id}>
+            <Link href={`/recipes/${params.category}/${entry.sys.id}`}>
               <span className="text-2xl text-purple-500">{entry.fields.name}</span>
             </Link>
           </li>

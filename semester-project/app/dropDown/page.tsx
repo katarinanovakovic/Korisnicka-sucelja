@@ -34,7 +34,7 @@ const Dropdown = () => {
                 {isDropdownVisible && 
                     (<ul>
                         {categories.map((name) => 
-                        (<li onClick={handleClick}>
+                        (<li key = {name} onClick={handleClick}>
                             {(name === "all") ? (<Link href={`/recipes`}>{name}</Link>) : (<Link href={`/recipes/${name}`}>{name}</Link>)}
                         </li>))}
                     </ul>)}
