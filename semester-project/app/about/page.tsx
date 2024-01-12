@@ -1,7 +1,16 @@
 export default function About() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-10">
-      <h1 className="text-3xl font-bold">About Page</h1>
+    <main>
+      <br/>
+      <h1 className="text-3xl font-bold text-center">About Us
+      <br/>
+      <br/>
+      </h1>
+      <div style={{ textAlign: 'center', fontSize: '32px', color: 'darkgreen' }}>
+      We're a passionate team of food enthusiasts who believe that eating well doesn't have to be complicated. 
+      Our mission is to empower you with the knowledge to lead a healthier lifestyle. 
+      </div>
+      
     </main>
   );
 }

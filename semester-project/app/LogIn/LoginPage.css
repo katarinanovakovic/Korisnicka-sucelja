@@ -1,0 +1,42 @@
+/* LoginPage.css */
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .login-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: lightgreen;
+  }
+  
+  .login-container {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+  }
+  
+  .login-heading {
+    font-size: 32px; /* Updated font size */
+    margin-bottom: 20px; /* Added margin for spacing */
+    font-weight: bold;
+  }
+  
+  .input-container {
+    margin: 10px 0;
+  }
+  
+  .username-input,
+  .password-input {
+    width: 100%;
+    padding: 24px; /* Increased padding */
+    font-size: 16px; /* Updated font size */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  

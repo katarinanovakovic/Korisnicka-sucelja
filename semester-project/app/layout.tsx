@@ -3,9 +3,10 @@ import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Dropdown from "./dropDown/page"; 
+import Button from "@/components/Button";
 
 const pages = {
-  Home: "/",
+  Home: "/", 
   Recipes: "/recipes/all",
   Diet: "/diet",
   About: "/about",

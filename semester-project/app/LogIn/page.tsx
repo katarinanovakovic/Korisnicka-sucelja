@@ -1,7 +1,22 @@
-export default function LogIn() {
+// LoginPage.tsx
+
+import React from 'react';
+import './LoginPage.css';
+
+const LoginPage: React.FC = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-10">
-      <h1 className="text-3xl font-bold">Log In Page</h1>
-    </main>
+    <div className="login-page">
+      <div className="login-container">
+        <h1 className="login-heading">Log In</h1>
+        <div className="input-container">
+          <input type="text" placeholder="Username" className="username-input" />
+        </div>
+        <div className="input-container">
+          <input type="password" placeholder="Password" className="password-input" />
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default LoginPage;
