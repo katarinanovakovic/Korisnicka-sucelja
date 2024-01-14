@@ -1,45 +1,56 @@
 'use client'
-import React, {useState, useEffect, useRef} from "react";
-import Link from "next/link";
+import React, { useState, useRef } from "react";
+import Button from "@/components/Button";
 
+const categories = ["breakfast", "lunch", "dinner", "dessert", "snack", "all"];
 
-const categories = ["breakfast", "lunch", "dinner", "dessert", "snack", "all"]; 
+const styles = {
+  dropdownContainer: {
+    position: "relative",
+    zIndex: 1,
+  } as const,
+  dropdownList: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    zIndex: 2, 
+  } as const,
+};
 
 const Dropdown = () => {
-    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (dropdownRef.current && !(dropdownRef.current as any).contains(event.target)) {
-        setIsDropdownVisible(false);
-      }
-    };
+  const handleMouseEnter = () => {
+    setIsDropdownVisible(true);
+  };
 
-    document.addEventListener('click', handleOutsideClick);
+  const handleMouseLeave = () => {
+    setIsDropdownVisible(false);
+  };
 
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  }, []);
+  const handleClick = () => {
+    setIsDropdownVisible(!isDropdownVisible);
+  };
 
-
-    const handleClick = () => {
-        setIsDropdownVisible(!isDropdownVisible);
-    }
-
-    return (
-        <div ref = {dropdownRef}>
-            <button onClick={handleClick}>Recipes</button>
-                {isDropdownVisible && 
-                    (<ul>
-                        {categories.map((name) => 
-                        (<li key = {name} onClick={handleClick}>
-                            {(name === "all") ? (<Link href={`/recipes`}>{name}</Link>) : (<Link href={`/recipes/${name}`}>{name}</Link>)}
-                        </li>))}
-                    </ul>)}
-        </div>
-    );
+  return (
+    <div ref={dropdownRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} style={styles.dropdownContainer}>
+      <Button path={`/recipes`} name="Recipes" onClick={handleClick} />
+      {isDropdownVisible && (
+        <ul  style={styles.dropdownList}>
+          {categories.map((name) => (
+            <li key={name} onClick={handleClick}>
+              {name === "all" ? (
+                <Button path={`/recipes`} name={name} onClick={handleClick} />
+              ) : (
+                <Button path={`/recipes/${name}`} name={name} onClick={handleClick} />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 };
 
 export default Dropdown;

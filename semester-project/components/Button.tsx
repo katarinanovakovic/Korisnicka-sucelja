@@ -1,13 +1,14 @@
-// Button.tsx
 'use client'
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 interface ButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
+  path: string;
+  name: string;
+  onClick?: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ onClick, children }) => {
+const Button: React.FC<ButtonProps> = ({ path, name, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseOver = () => {
@@ -19,24 +20,28 @@ const Button: React.FC<ButtonProps> = ({ onClick, children }) => {
   };
 
   const buttonStyle: React.CSSProperties = {
-    backgroundColor: isHovered ? '#0064008e' : '#90EE90', // Dark purple on hover, light purple otherwise
-    color: '#000000', // White text
+    backgroundColor: isHovered ? '#006400' : '#90EE90',
+    color: isHovered ? '#FFFFFF' : '#000000',
     padding: '10px 15px',
+    width: '100px',
+    height: '40px',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
   };
 
   return (
-    <button
-      style={buttonStyle}
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}
-      onClick={onClick}
-    >
-      {children}
-    </button>
+    <Link href={path}>
+      <button
+        onClick={onClick}
+        style={buttonStyle}
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+      >
+        {name}
+      </button>
+    </Link>
   );
 };
 

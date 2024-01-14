@@ -34,7 +34,7 @@ export default function RootLayout({
               <li key={name}>
                 {name === 'Recipes' ? 
                 (<Dropdown/>):
-                (<Link href={path}>{name}</Link>)}
+                (<Button path={path} name={name}></Button>)}
               </li>
             ))}
           </ul>
