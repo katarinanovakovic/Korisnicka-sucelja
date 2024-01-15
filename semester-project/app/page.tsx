@@ -1,24 +1,30 @@
 'use client'
 import Button from '@/components/Button';
 import React from 'react';
+import './home.css';
 
 const Home: React.FC = () => {
   return (
     <div>
-      <h1 className="font-playfair text-5xl text-center lg:text-left xl:text-6xl font-extrabold text-brand-purple-900 whitespace-break-spaces">
-        HEALTHY <br/>
-        AND <br />
-        EASY <br />
+      <div className="app-container">
+      <div className="left-half">
+        <div className="title">
+        HEALTY 
         <br/>
-      </h1>
-      <p className="font-roboto text-base text-center text-brand-purple-900 lg:text-left xl:text-lg whitespace-break-spaces">
-        Wholesome Recipes Made Simple: 
+        AND
         <br/>
-        Discover a World of Healthy Culinary Delights!
-      </p>
-      <br/>
-      <br/>
-      <Button path="/recipes" name="LET'S GO"></Button>
+        EASY
+        </div>
+        <div className="description">Wholesome Recipes Made Simple: 
+        <br/>
+        Discover a World of Healthy Culinary Delights!.</div>
+        <br/>
+        <Button path="/recipes" name="GO ->"></Button>
+      </div>
+      <div className="right-half">
+        <img className="image" src="https://i.pinimg.com/564x/dd/78/d2/dd78d2be7258b95a61c32aa6fb8e56ce.jpg" alt="Slika" />
+      </div>
+    </div>
     </div>
   );
 };

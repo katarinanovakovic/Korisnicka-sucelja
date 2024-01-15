@@ -29,6 +29,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <nav className="flex items-center justify-center p-4">
+          <div className= "flex items-center gap-4">
+            <img src="https://i.pinimg.com/564x/70/67/99/706799eb1e68354103b64812deee1856.jpg"alt="Logo" className="logo" style={{ maxHeight: '1000px', maxWidth: '100px' }}/>
+          
           <ul className="flex gap-8">
             {Object.entries(pages).map(([name, path]) => (
               <li key={name}>
@@ -38,6 +41,7 @@ export default function RootLayout({
               </li>
             ))}
           </ul>
+          </div>
         </nav>
         {children}
       </body>
