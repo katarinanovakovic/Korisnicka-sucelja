@@ -1,6 +1,5 @@
 import { createClient, Entry } from 'contentful-management';
 import { useState } from 'react';
-//import updateEntry from '../addCommentToRecipe/page';
 import addLinkToCommentsField from '../addCommentToRecipe/page';
 
 interface CommentFields {

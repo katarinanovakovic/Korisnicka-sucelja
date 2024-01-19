@@ -2,16 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Dropdown from "./dropDown/page"; 
-import Button from "@/components/Button";
+import NavBar from "@/components/navBar/page";
 
-const pages = {
-  Home: "/", 
-  Recipes: "/recipes/all",
-  Diet: "/diet",
-  About: "/about",
-  LogIn: "/LogIn",
-};
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,24 +18,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav className="flex items-center justify-center p-4">
-          <div className= "flex items-center gap-4">
-            <img src="https://i.pinimg.com/564x/70/67/99/706799eb1e68354103b64812deee1856.jpg"alt="Logo" className="logo" style={{ maxHeight: '1000px', maxWidth: '100px' }}/>
-          
-          <ul className="flex gap-8">
-            {Object.entries(pages).map(([name, path]) => (
-              <li key={name}>
-                {name === 'Recipes' ? 
-                (<Dropdown/>):
-                (<Button path={path} name={name}></Button>)}
-              </li>
-            ))}
-          </ul>
-          </div>
-        </nav>
+        <NavBar></NavBar>
         {children}
       </body>
     </html>

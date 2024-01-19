@@ -1,5 +1,5 @@
 'use client'
-import CommentForm from '@/app/addComment/page';
+import CommentForm from '@/components/addComment/page';
 import React, { useState, useEffect } from 'react';
 
 interface Params {

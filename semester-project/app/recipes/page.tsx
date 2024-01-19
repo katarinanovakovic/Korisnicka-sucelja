@@ -1,10 +1,10 @@
-import RecipesCategories, { RecipesCategoriesParams } from "./[category]/page";
+import RecipesCategories from "./[category]/page";
 
 export default function Recipes() {
 
     const category = "all";
     return (
-      <main className="flex min-h-screen flex-col items-center justify-between p-10">
+      <main>
         <RecipesCategories params = {{category}}/>
       </main>
     );
