@@ -1,6 +1,9 @@
 'use client'
 import CommentForm from '@/components/addComment/page';
 import React, { useState, useEffect } from 'react';
+import "./recipesDetails.css";
+import renderStars from "@/components/stars/page";
+import RecentRecipes from '@/components/recentRecipes/page';
 
 interface Params {
   id: number;
@@ -25,9 +28,16 @@ interface Comment {
 interface RecipeFields {
   name: string;
   category: string[];
+  diet: string[];
+  difficulty: string;
+  cookingTime:number;
   ingredients: string[];
   instructions: string;
-  comments?: Comment[]; // Array of Comment
+  postimage?:any;
+  comments:Comment[];
+  rating:number;
+  nutritions: string;
+  description:string;
 }
 
 interface Recipe {
@@ -40,6 +50,7 @@ interface Recipe {
 export default function RecipsDetails({ params }: RecipesCategoriesParams) {
   const [entry, setEntry] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isNavBarVisible, setIsNavBarVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,6 +82,10 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
     fetchData(); 
   }, [params.id]);
 
+  const handleToggleNavBar = () => {
+    setIsNavBarVisible((prevValue) => !prevValue);
+  };
+
   if (loading) {
     return (
       <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
@@ -87,27 +102,69 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
     );
   }
 
+
+
   return (
-    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-      <div key={entry.sys.id}>
-        <h1 className="text-3xl font-bold p-10 capitalize">
-          <span className="text-neutral-400">Recipe:</span> {entry.fields.name}
-        </h1>
-        <p className="text-xl p-10">{entry.fields.ingredients.map((ingredient, index) => (
-          <React.Fragment key={index}>
-            {ingredient}
-            {index !== entry.fields.ingredients.length - 1 && <br />}
-          </React.Fragment>
-        ))}
-        </p>
-        <p className="text-xl p-10">{entry.fields.instructions}</p>
-        <CommentForm recipeId = {entry.sys.id}/>
-        <div>
-          <h2 className="text-2xl font-bold p-5">Comments:</h2>
-          <ul>
-            {entry.fields.comments ? (
+    <>
+    <main className="main-container">
+      <div className="pageimage">
+          {entry.fields.postimage?.fields?.file?.url ? (
+            <img src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
+          ) : (
+            <span>No Image</span>
+          )}
+        </div>
+      <div className="recipe-details" key={entry?.sys.id}>
+        <h1 className="title">{entry?.fields.name}</h1>
+        <div className="star-rating">{renderStars(entry.fields.rating)}</div>
+        <h3>{entry?.fields.description}</h3>
+        <div className="display">
+          <div className="display-line">
+            <p className="first-line">{entry?.fields.cookingTime}</p>
+            <p className="second-line">mins</p>
+          </div>
+          <div className="display-line">
+            <p className="first-line">{entry?.fields.nutritions}</p>
+            <p className="second-line">nutritions</p>
+          </div>
+          <div className="display-line">
+            <p className="first-line">{entry?.fields.ingredients.length}</p>
+            <p className="second-line">ingredients</p>
+          </div>
+        </div>
+        <div className="diet">
+          <p className= "diet-title">Dietary preferences</p>
+          {entry?.fields.diet.map((preference, index) => (
+            <p className = "preference" key={index}>{preference}</p>
+          ))}
+        </div>
+      </div>
+    </main>
+    <div className="flex w-full mt-20">
+  <div className="ingredients">
+    <p className="section-title">Ingredients:</p>
+    {entry?.fields.ingredients.map((ingredient, index) => (
+      <p className="ingredient" key={index}>
+        {ingredient}
+        {index !== entry.fields.ingredients.length - 1 && <br />}
+      </p>
+    ))}
+  </div>
+
+  <div className="instructions">
+    <p className="section-title">Instructions:</p>
+    <p>{entry?.fields.instructions}</p>
+  </div>
+
+  <div className="recent-added-recipes"><RecentRecipes/></div>
+</div>
+        <CommentForm recipeId={entry?.sys.id} />
+        <div className="comment-section">
+          <p className="section-title">Comments:</p>
+          <ul className="comments-list">
+            {entry?.fields.comments ? (
               entry.fields.comments.map((comment, index) => (
-                <li key={index} className="p-3 border border-gray-300 mb-3">
+                <li key={index} className="comment-item">
                   <strong>{comment.fields.author}:</strong> {comment.fields.text}
                 </li>
               ))
@@ -116,7 +173,8 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
             )}
           </ul>
         </div>
-      </div>
-    </main>
+        </>
   );
+  
+  
 }

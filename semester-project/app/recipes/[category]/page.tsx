@@ -1,28 +1,19 @@
 'use client'
-import CommentForm from '@/components/addComment/page';
 import React, { useState, useEffect } from 'react';
-import "./recipesDetails.css";
-import renderStars from "@/components/stars/page";
-import RecentRecipes from '@/components/recentRecipes/page';
+import Link from "next/link";
+import SearchBox from "@/components/searchbox/page";
+import FilterBox from "@/components/filterBox/page";
+import "./recipes.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faUtensils, faComment } from '@fortawesome/free-solid-svg-icons';
 
 interface Params {
-  id: number;
+  category: string;
 }
 
 export interface RecipesCategoriesParams {
   params: Params;
-}
-
-interface CommentFields {
-  author: string;
-  text: string;
-}
-
-interface Comment {
-  sys: {
-    id: string;
-  };
-  fields: CommentFields;
 }
 
 interface RecipeFields {
@@ -36,8 +27,6 @@ interface RecipeFields {
   postimage?:any;
   comments:Comment[];
   rating:number;
-  nutritions: string;
-  description:string;
 }
 
 interface Recipe {
@@ -47,134 +36,134 @@ interface Recipe {
   fields: RecipeFields;
 }
 
-export default function RecipsDetails({ params }: RecipesCategoriesParams) {
-  const [entry, setEntry] = useState<Recipe | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isNavBarVisible, setIsNavBarVisible] = useState<boolean>(false);
+const contentful = require('contentful');
+
+const client = contentful.createClient({
+  space: 'c2epmrmqiqap',
+  accessToken: 'SsS4a0T3sfF4NpTF4xhqPGL1OHjwgiN2f72YHtTbL8s',
+});
+
+export default function RecipesCategories({ params }: RecipesCategoriesParams) {
+  const [entries, setEntries] = useState<Recipe[]>([]);
+  const [filteredEntries, setFilteredEntries] = useState<Recipe[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedDiets, setSelectedDiets] = useState<string[]>([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('');
+  const [maxCookingTime, setMaxCookingTime] = useState<number>(60);
+  const [showFilterBox, setShowFilterBox] = useState<boolean>(false);
+  const [recipeCount, setRecipeCount] = useState<number>(0);
+
+  const handleShowFilterBoxClick = () => {
+    // Toggle the state to show/hide the FilterBox
+    setShowFilterBox((prevShowFilterBox) => !prevShowFilterBox);
+  };
+
+  const handleFilterClose = () => {
+    // Handle filter box close logic
+    setShowFilterBox(false);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleFilterSubmit = (diets: string[], difficulty: string, maxCookingTime: number) => {
+    // Update the state with the selected filters
+    setSelectedDiets(diets);
+    setSelectedDifficulty(difficulty);
+    setMaxCookingTime(maxCookingTime);
+  
+    // Filter entries based on selected filters
+    const filtered = entries
+      .filter(entry => diets.length === 0 || entry.fields.diet.some(diet => diets.includes(diet)))
+      .filter(entry => !difficulty || entry.fields.difficulty === difficulty)
+      .filter(entry => maxCookingTime === 0 || entry.fields.cookingTime <= maxCookingTime);
+  
+    setFilteredEntries(filtered);
+    setShowFilterBox(false);
+  };
+
+  const handleFilterUndo = () => {
+    // Clear selected filters and reset filtered entries
+    setSelectedDiets([]);
+    setSelectedDifficulty('');
+    setMaxCookingTime(60);
+    setFilteredEntries(entries);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const contentful = require('contentful');
-        const client = contentful.createClient({
-          space: 'c2epmrmqiqap',
-          accessToken: 'SsS4a0T3sfF4NpTF4xhqPGL1OHjwgiN2f72YHtTbL8s',
-        });
-
         const response = await client.getEntries({
           content_type: 'recipe',
-          'sys.id': params.id.toString(),
-          include: 3, 
         }) as { items: Recipe[] };
 
-        if (response.items.length > 0) {
-          setEntry(response.items[0]);
-        } else {
-          console.warn(`Recipe with ID ${params.id} not found.`);
-        }
+        setEntries(response.items);
+        setFilteredEntries(response.items);
+        setRecipeCount(response.items.length); 
       } catch (error) {
-        console.error('Error fetching entry:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching entries:', error);
       }
     };
 
-    fetchData(); 
-  }, [params.id]);
-
-  const handleToggleNavBar = () => {
-    setIsNavBarVisible((prevValue) => !prevValue);
-  };
-
-  if (loading) {
-    return (
-      <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <p>Loading...</p>
-      </main>
-    );
-  }
-
-  if (!entry) {
-    return (
-      <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <p>Recipe not found.</p>
-      </main>
-    );
-  }
-
-
+    fetchData();
+  }, []);
 
   return (
-    <>
-    <main className="main-container">
-      <div className="pageimage">
-          {entry.fields.postimage?.fields?.file?.url ? (
-            <img src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
-          ) : (
-            <span>No Image</span>
-          )}
+    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
+    <button onClick={handleShowFilterBoxClick}>
+        <FontAwesomeIcon icon={faFilter} className="mr-2" />
+        Filters
+      </button>
+    {showFilterBox && <div className="filter-box-overlay"></div>}
+    {showFilterBox && (
+      <div className="filter-box-container">
+        <FilterBox
+          onFilterSubmit={handleFilterSubmit}
+          onFilterUndo={handleFilterUndo}
+          onClose={handleFilterClose}
+        />
+      </div>
+    )}
+      <h1 className="text-3xl font-bold p-10" style={{ textTransform: 'capitalize' }}>{params.category} Recipes</h1>
+      <div className="flex justify-between w-full">
+  <SearchBox onSearch={handleSearch} />
+  <div className="recipe-count ml-auto">
+          You have <span style={{ fontWeight: 'bold' }}>
+            {filteredEntries
+              .filter(entry => entry.fields.category.includes(params.category))
+              .filter(entry => entry.fields.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .length
+            }
+          </span> recipes to explore
         </div>
-      <div className="recipe-details" key={entry?.sys.id}>
-        <h1 className="title">{entry?.fields.name}</h1>
-        <div className="star-rating">{renderStars(entry.fields.rating)}</div>
-        <h3>{entry?.fields.description}</h3>
-        <div className="display">
-          <div className="display-line">
-            <p className="first-line">{entry?.fields.cookingTime}</p>
-            <p className="second-line">mins</p>
-          </div>
-          <div className="display-line">
-            <p className="first-line">{entry?.fields.nutritions}</p>
-            <p className="second-line">nutritions</p>
-          </div>
-          <div className="display-line">
-            <p className="first-line">{entry?.fields.ingredients.length}</p>
-            <p className="second-line">ingredients</p>
-          </div>
-        </div>
-        <div className="diet">
-          <p className= "diet-title">Dietary preferences</p>
-          {entry?.fields.diet.map((preference, index) => (
-            <p className = "preference" key={index}>{preference}</p>
+</div>
+
+      <br></br>
+      <br></br>
+      <div className="recipe-container">
+        {filteredEntries
+          .filter(entry => entry.fields.category.includes(params.category))
+          .filter(entry => entry.fields.name.toLowerCase().includes(searchQuery.toLowerCase()))
+          .map(entry => (
+            <div key={entry.sys.id} className="recipe-box">
+              <Link href={`/recipes/${params.category}/${entry.sys.id}`}>
+                {entry.fields.postimage?.fields?.file?.url ? (
+                  <img src={entry.fields.postimage.fields.file.url}
+                    alt={entry.fields.name} />
+                ) : (
+                  <span>No Image</span>
+                )}
+                <div className="recipe-name">{entry.fields.name}</div>
+                <div className="cooking-time"> Cooking Time: {entry.fields.cookingTime} mins</div>
+                <div className="difficulty-level"> Difficulty: {entry.fields.difficulty}</div>
+                <div className="ingredient-count">Ingredients: {entry.fields.ingredients.length}</div>
+                <div className="comment-count"><FontAwesomeIcon icon={faComment} />{entry.fields.comments ? entry.fields.comments.length : 0}
+</div>
+              </Link>
+            </div>
           ))}
-        </div>
       </div>
     </main>
-    <div className="flex w-full mt-20">
-  <div className="ingredients">
-    <p className="section-title">Ingredients:</p>
-    {entry?.fields.ingredients.map((ingredient, index) => (
-      <p className="ingredient" key={index}>
-        {ingredient}
-        {index !== entry.fields.ingredients.length - 1 && <br />}
-      </p>
-    ))}
-  </div>
-
-  <div className="instructions">
-    <p className="section-title">Instructions:</p>
-    <p>{entry?.fields.instructions}</p>
-  </div>
-
-  <div className="recent-added-recipes"><RecentRecipes/></div>
-</div>
-        <CommentForm recipeId={entry?.sys.id} />
-        <div className="comment-section">
-          <p className="section-title">Comments:</p>
-          <ul className="comments-list">
-            {entry?.fields.comments ? (
-              entry.fields.comments.map((comment, index) => (
-                <li key={index} className="comment-item">
-                  <strong>{comment.fields.author}:</strong> {comment.fields.text}
-                </li>
-              ))
-            ) : (
-              <p>No comments available.</p>
-            )}
-          </ul>
-        </div>
-        </>
   );
-  
-  
-}
+};
