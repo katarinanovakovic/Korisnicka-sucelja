@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import "./recipesDetails.css";
 import renderStars from "@/components/stars/page";
 import RecentRecipes from '@/components/recentRecipes/page';
+import Image from "next/image";
 
 interface Params {
   id: number;
@@ -109,7 +110,7 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
     <main className="main-container">
       <div className="pageimage">
           {entry.fields.postimage?.fields?.file?.url ? (
-            <img src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
+            <Image src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
           ) : (
             <span>No Image</span>
           )}

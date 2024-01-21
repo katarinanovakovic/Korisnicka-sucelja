@@ -7,6 +7,7 @@ import "./recipes.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faClock, faUtensils, faComment } from '@fortawesome/free-solid-svg-icons';
+import Image from 'next/image';
 
 interface Params {
   category: string;
@@ -149,8 +150,8 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
             <div key={entry.sys.id} className="recipe-box">
               <Link href={`/recipes/${params.category}/${entry.sys.id}`}>
                 {entry.fields.postimage?.fields?.file?.url ? (
-                  <img src={entry.fields.postimage.fields.file.url}
-                    alt={entry.fields.name} />
+                  <Image src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
+
                 ) : (
                   <span>No Image</span>
                 )}

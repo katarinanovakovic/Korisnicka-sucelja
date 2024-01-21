@@ -2,6 +2,7 @@
 import Button from '@/components/Button';
 import React from 'react';
 import './home.css';
+import Image from "next/image";
 
 const Home: React.FC = () => {
   return (
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
         <Button path="/recipes" name="GO ->"></Button>
       </div>
       <div className="right-half">
-        <img className="image" src="https://i.pinimg.com/564x/dd/78/d2/dd78d2be7258b95a61c32aa6fb8e56ce.jpg" alt="Slika" />
+        <Image className="image" src="https://i.pinimg.com/564x/dd/78/d2/dd78d2be7258b95a61c32aa6fb8e56ce.jpg" alt="Slika" />
       </div>
     </div>
     </div>
