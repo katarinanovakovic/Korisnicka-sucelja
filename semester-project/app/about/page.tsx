@@ -9,7 +9,7 @@ export default function About() {
       <br/>
       </h1>
       <div style={{ textAlign: 'center', fontSize: '32px', color: 'darkgreen' }}>
-      We're a passionate team of food enthusiasts who believe that eating well doesn't have to be complicated. 
+      We&apos;re a passionate team of food enthusiasts who believe that eating well doesn&apos;t have to be complicated. 
       Our mission is to empower you with the knowledge to lead a healthier lifestyle. &apos;
       </div>
       
