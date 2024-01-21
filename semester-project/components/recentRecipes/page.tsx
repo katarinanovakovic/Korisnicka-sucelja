@@ -52,7 +52,7 @@ export default function RecentRecipes() {
       <div className="recent-recipe-container">
       <h1>Latest Recipes</h1>
         {entries.map(entry => (
-        <Link href={`/recipes/${entry.fields.category}/${entry.sys.id}`}>
+        <Link href={`/recipes/${entry.fields.category}/${entry.sys.id}`} key={entry.sys.id}>
           <div key={entry.sys.id} className="recent-recipe-box">
             <Image src={entry.fields.postimage?.fields?.file?.url} alt={entry.fields.name} />
             <div className="recent-recipe-details">
