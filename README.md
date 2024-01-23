@@ -1,1 +1,5 @@
-ÿş
+1. tjedan: Dodavanje recepata kao postova.
+2. tjedan: UreÄ‘ivanje home pagea i rad na dizajnu
+3. tjedan: Prebacivanje za .json file-a na contentful (porblem: povezati komentare sa receptima)
+4. Log in i Sign up page
+   ZavrÅ¡iti: napravit mobilnu veziju, napravit loading i 404 page, napravit about page i uredit css.
