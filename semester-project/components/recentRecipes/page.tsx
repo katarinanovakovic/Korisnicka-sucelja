@@ -3,7 +3,6 @@ import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faComment } from '@fortawesome/free-solid-svg-icons';
 import "./recentRecipes.css";
-import Image from "next/image";
 
 interface RecipeFields {
   name: string;
@@ -52,9 +51,9 @@ export default function RecentRecipes() {
       <div className="recent-recipe-container">
       <h1>Latest Recipes</h1>
         {entries.map(entry => (
-        <Link href={`/recipes/${entry.fields.category}/${entry.sys.id}`} key={entry.sys.id}>
-          <div key={entry.sys.id} className="recent-recipe-box">
-            <Image src={entry.fields.postimage?.fields?.file?.url} alt={entry.fields.name} />
+        <Link key={entry.sys.id} href={`/recipes/${entry.fields.category}/${entry.sys.id}`}>
+          <div className="recent-recipe-box">
+            <img src={entry.fields.postimage?.fields?.file?.url} alt={entry.fields.name} />
             <div className="recent-recipe-details">
                 <div className="recent-recipe-name">{entry.fields.name}</div>
                 <div className="recent-cooking-time"><FontAwesomeIcon icon={faClock}/>  {entry.fields.cookingTime} mins</div>

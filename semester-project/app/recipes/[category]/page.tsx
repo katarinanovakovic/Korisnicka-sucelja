@@ -1,13 +1,15 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
-import SearchBox from "@/components/searchbox/page";
+
 import FilterBox from "@/components/filterBox/page";
 import "./recipes.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
-import { faClock, faUtensils, faComment } from '@fortawesome/free-solid-svg-icons';
-import Image from 'next/image';
+import { faComment } from '@fortawesome/free-solid-svg-icons';
+import SearchBox from '@/components/searchBox/page';
+import SaveRecipe from '@/components/saveRecipe/page';
+
 
 interface Params {
   category: string;
@@ -112,10 +114,23 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
 
   return (
     <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-    <button onClick={handleShowFilterBoxClick}>
+      <h1 className="text-5xl font-bold p-10" style={{ textTransform: 'capitalize', color:'rgb(var(--main-color-rgb))' }}>{params.category} Recipes</h1>
+      <div className="search-container">
+    <SearchBox onSearch={handleSearch} />
+    <div className="recipe-count">
+      You have <span style={{ fontWeight: 'bold', color:'rgb(var(--main-color-rgb))' }}>
+        {filteredEntries
+          .filter(entry => entry.fields.category.includes(params.category))
+          .filter(entry => entry.fields.name.toLowerCase().includes(searchQuery.toLowerCase()))
+          .length
+        }
+      </span> recipes to explore
+    </div>
+  </div>
+  <button className = "filters" onClick={handleShowFilterBoxClick}>
         <FontAwesomeIcon icon={faFilter} className="mr-2" />
         Filters
-      </button>
+    </button>
     {showFilterBox && <div className="filter-box-overlay"></div>}
     {showFilterBox && (
       <div className="filter-box-container">
@@ -126,22 +141,6 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
         />
       </div>
     )}
-      <h1 className="text-3xl font-bold p-10" style={{ textTransform: 'capitalize' }}>{params.category} Recipes</h1>
-      <div className="flex justify-between w-full">
-  <SearchBox onSearch={handleSearch} />
-  <div className="recipe-count ml-auto">
-          You have <span style={{ fontWeight: 'bold' }}>
-            {filteredEntries
-              .filter(entry => entry.fields.category.includes(params.category))
-              .filter(entry => entry.fields.name.toLowerCase().includes(searchQuery.toLowerCase()))
-              .length
-            }
-          </span> recipes to explore
-        </div>
-</div>
-
-      <br></br>
-      <br></br>
       <div className="recipe-container">
         {filteredEntries
           .filter(entry => entry.fields.category.includes(params.category))
@@ -150,8 +149,8 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
             <div key={entry.sys.id} className="recipe-box">
               <Link href={`/recipes/${params.category}/${entry.sys.id}`}>
                 {entry.fields.postimage?.fields?.file?.url ? (
-                  <Image src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
-
+                  <img src={entry.fields.postimage.fields.file.url}
+                    alt={entry.fields.name} />
                 ) : (
                   <span>No Image</span>
                 )}
@@ -159,9 +158,14 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
                 <div className="cooking-time"> Cooking Time: {entry.fields.cookingTime} mins</div>
                 <div className="difficulty-level"> Difficulty: {entry.fields.difficulty}</div>
                 <div className="ingredient-count">Ingredients: {entry.fields.ingredients.length}</div>
-                <div className="comment-count"><FontAwesomeIcon icon={faComment} />{entry.fields.comments ? entry.fields.comments.length : 0}
-</div>
-              </Link>
+                </Link>
+                <div className="footer">
+                <div className="comment-count">
+                  <div className="comment-icon"><FontAwesomeIcon icon={faComment}/></div>
+                  {entry.fields.comments ? entry.fields.comments.length : 0}
+                </div>
+                <SaveRecipe recipeEntryId={entry.sys.id} />
+              </div>
             </div>
           ))}
       </div>

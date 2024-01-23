@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Dropdown from '@/components/dropDown/page';
+import Dropdown from '../dropdown/page';
 
 interface ButtonProps {
   path: string;
@@ -59,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive
       cursor: 'pointer',
       transition: 'background-color 0.3s ease, color 0.3s ease, border 0.3s ease',
     };
-  
+
     return (
       <div>
         <div style={{ position: 'relative' }}>
@@ -72,12 +72,12 @@ const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive
               disabled={disabled}>
               {name}
             </button>
-            {(isHovered || isDropdownVisible) && name === 'Recipes' ? (
+          </Link>
+          {(isHovered || isDropdownVisible) && name === 'Recipes' ? (
               <Dropdown showDropdown={isDropdownVisible} onMouseOver={handleDropdownMouseOver} onMouseOut={handleDropdownMouseOut} />
             ) : (
               ''
             )}
-          </Link>
         </div>
       </div>
     );

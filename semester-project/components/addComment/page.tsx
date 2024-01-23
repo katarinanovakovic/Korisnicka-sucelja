@@ -1,6 +1,8 @@
 import { createClient, Entry } from 'contentful-management';
 import { useState } from 'react';
 import addLinkToCommentsField from '../addCommentToRecipe/page';
+import { useAuth } from '@/app/AuthContext';
+import "./CommentForm.css";
 
 interface CommentFields {
   author: string;
@@ -47,6 +49,7 @@ type CommentFormProps = {
   
   // Use the updated type for CommentForm
 const CommentForm: React.FC<CommentFormProps> = ({ recipeId }) => {
+  const {isLoggedIn, setLoggedIn} = useAuth();
   const [author, setAuthor] = useState<string>('');
   const [text, setText] = useState<string>('');
 
@@ -62,7 +65,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ recipeId }) => {
   };
 
   return (
-    <form>
+    <div className="form">
+      {isLoggedIn && <form>
       <label>
         Author:
         <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} required />
@@ -80,7 +84,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ recipeId }) => {
       <button type="button" onClick={handleSubmit}>
         Submit Comment
       </button>
-    </form>
+    </form>}
+    </div>
   );
 };
 

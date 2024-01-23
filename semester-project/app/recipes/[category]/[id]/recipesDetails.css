@@ -1,34 +1,33 @@
-/* Add this CSS to increase the font size of ingredients and instructions */
 
-.ingredients,
-.instructions {
-    font-size: 18px; /* Adjust the font size as needed */
+body, main {
+    margin:0; 
+    padding:0;   
+    background-color:rgb(var(--background-start-rgb));
 }
 
-/* Rest of your existing CSS */
-
-body,
-html {
-    margin: 0;
-    padding: 0;
-}
-
-/* Update the main container styles */
 .main-container {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .main-information,
+  .secondary-information
+  .comment-section {
+    width: 100%;
+    height:100%;
+    display: flex;
     margin: 0;
-    height: 100vh;
-}
-
-/* Style for the page image */
-.pageimage {
+    flex-wrap: nowrap;
+  }
+  
+  .pageimage {
     flex: 1;
     order: 1;
     width: 100%;
-    height: 100%;
-    background-color: blue;
+    height: 100vh;
     clip-path: polygon(0 0, 100% 0, 60% 100%, 0% 100%);
-    margin-top:-120px;
+    margin-top:-100px;
 }
 
 .pageimage img {
@@ -37,74 +36,60 @@ html {
     object-fit: cover;
 }
 
-/* Style for the recipe details or other content */
 .recipe-details {
-    margin-top: 0;
     flex: 1;
     order: 2;
     position: relative;
     width: 50%;
-    padding: 20px;
+    padding: 30px;
     background-color: #fff;
-    border-radius: 8px;
-    margin-left: 50px;
     margin-top: var(--page-margin);
+    background-color: rgb(var(--background-start-rgb));
 }
 
 .title {
-    font-size: 50px;
-    margin-bottom: 5px;
-    color: darkgreen;
-    margin-top: 0;
+    font-size: 60px;
+    margin:0px auto;
+    color: rgb(var(--main-color-rgb));
 }
 
 h3 {
     font-size: 20px;
-    /* Adjust the font size as needed */
-    color: #333;
-    margin-top: 50px;
-    margin-left:-80px;
-    margin-right: 30px;
-    margin-bottom:20px;
+    color: var(--font-color);
+    margin: 40px auto;
 }
 
-/* Fix the selector for the display class */
 .display {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom:10px;
+    margin-bottom: 20px;
+    min-width:600px;
 }
 
 .display-line {
     display: flex;
     flex-direction: column;
-    /* Stack children vertically */
     width: 30%;
-    /* Two columns, adjust as needed */
     box-sizing: border-box;
-    border-left: 1px green solid;
+    border-left: 1px rgb(var(--main-color-rgb)) solid;
     margin-top: 50px;
 }
 
 .first-line,
 .second-line {
     width: 100%;
-    /* Make sure each line takes up the full width */
 }
 
 .first-line {
     font-size: 2.5em;
-    /* Adjust the font size as needed */
     margin-bottom: 0;
-    /* Remove default margin */
     text-align: left;
     padding-left: 40px;
-    color: green;
+    color: rgb(var(--main-color-rgb));
 }
 
 .second-line {
     font-size: 1em;
-    /* Adjust the font size as needed */
     margin-top: 0;
     text-align: center;
 }
@@ -112,7 +97,6 @@ h3 {
 .display-line:first-child {
     border-left: none;
     padding-left: 50px;
-    /* Remove the right border for the last child */
 }
 
 .diet {
@@ -128,64 +112,115 @@ h3 {
 }
   
   .preference {
-    border-radius: 10px; /* You can adjust the border-radius value as needed */
-    background-color: green;
+    border-radius: 10px; 
+    background-color: rgb(var(--main-color-rgb));
     color: white;
-    margin-right: 10px; /* You can adjust the margin as needed to create space between preferences */
-    padding: 5px 10px; /* You can adjust the padding as needed for spacing inside each preference */
-  }
-
-  .ingredients {
-    width:33%;
+    margin-right: 10px;
+    padding: 5px 10px;
   }
   
-  .ingredient::before {
-    content: '\2022';
-    /* Unicode character for a bullet point */
-    color: green;
-    margin-right: 5px;
-    /* Adjust the spacing between the dot and the text */
-  }
-  
-  .bullet {
-    content: '\2022';
-    color: green;
-    margin-right: 5px;
-  }
-  
-  .instructions {
-    font-size: 20px;
-    margin-bottom: 20px;
-    width: 33%;
-  }
-
-.recent-added-recipes {
-    width:33%;
-}
-
-.comment-section {
-    margin-top: 20px;
-}
-
-.comments-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-.comment-item {
-    margin-bottom: 10px;
-}
-
-.comment-item strong {
-    font-weight: bold;
-    margin-right: 5px;
-}
-
-.star {
-    color: black;
+  .star {
+    color: var(--font-color);
     font-size: 30px;
 }
 
 .yellow-star {
-    color: green;
+    color: rgb(var(--main-color-rgb));
 }
+
+.secondary-information {
+    display:flex;
+  }
+  
+.instructions {
+    width:60%;
+}
+
+.ingredients {
+    width:40%;
+    background-color: rgb(var(--main-color-rgb));
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--font-color);
+}
+
+.ingredient::before {
+  content: '\2022'; 
+  color: white;
+  margin-right: 10px;
+}
+
+.ingredient {
+    border-radius: 10px;
+    margin:5%;
+    padding: 5px 10px;
+    font-size:20px;
+    color:white;
+    margin-left:30%;
+}
+  
+.instructions {
+    margin:20px;
+    color: var(--font-color);
+    font-size:20px;
+}
+
+
+.comment-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top:100px;
+  }
+  
+  .recent-added-recipes {
+    flex: 1;
+    margin-right: 20px; /* Adjust the margin as needed */
+  }
+  
+  .comments {
+    flex: 2;
+  }
+  
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .comments-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .comment-item {
+    margin-bottom: 10px;
+  }
+
+  @media only screen and (max-width: 1000px) {
+    .display {
+        display: none;
+  }
+
+  .diet {
+    display:flex;
+    margin:0px;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .pageimage {
+      display: none;
+}
+.recent-added-recipes {
+  display:none;
+}
+}
+
+
+  

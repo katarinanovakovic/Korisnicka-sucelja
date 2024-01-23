@@ -15,15 +15,11 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "clsx": "^2.0.0",
-    "contentful": "^10.6.14",
+    "contentful": "^10.6.16",
     "contentful-management": "^11.12.0",
     "next": "13.5.5",
     "react": "^18",
-    "react-dom": "^18",
-    "react-redux": "^9.0.4",
-    "react-router-dom": "^6.21.0",
-    "redux": "^5.0.0",
-    "switch": "^0.0.0"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",

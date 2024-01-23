@@ -1,29 +1,24 @@
-/* styles.css */
-
-.recent-recipe-container {
-    margin-top:-50px;
-  }
-  
-  .recent-recipe-box {
+.recent-recipe-box {
     width: 100%; /* Adjust the width as needed */
     display: flex;
     align-items: center;
     text-align: center;
     margin-bottom: 10px; /* Add margin to create space between recipe boxes */
-    background-color:green;
+    background-color:rgb(var(--main-color-rgb));
     padding:10px;
     border-radius:50px;
   }
   
   .recent-recipe-box img {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%; 
     object-fit: cover;
     margin-right: 10px; /* Add margin to create space between image and text */
   }
   
   .recent-recipe-details {
+    font-size:20px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;

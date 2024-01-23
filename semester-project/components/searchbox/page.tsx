@@ -16,7 +16,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch }) => {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '-100px' }}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <FontAwesomeIcon icon={faSearch} style={{ marginRight: '5px', color: 'darkgreen'}} />
       <input
         type="text"

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import "./filterBox.css";
 import Button from '@/components/button/page';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface FilterBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   onFilterSubmit: (selectedDiets: string[], selectedDifficulty: string, maxCookingTime: number) => void;
@@ -92,7 +94,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onFilterSubmit, onFilterUndo, onC
   return (
     <div className="filter-box-container" {...props}>
       <div className="filter-box-close" onClick={onClose}>
-        X
+      <FontAwesomeIcon icon={faTimes} className="close-icon"/>
       </div>
     <div className="filter-box-label">
       <label>Diet: </label>
