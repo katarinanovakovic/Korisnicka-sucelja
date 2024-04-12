@@ -2,8 +2,7 @@
 import { useAuth } from "@/app/AuthContext";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
-import "./logInPage.css";
+import { faUser, faExclamationCircle, faLock } from "@fortawesome/free-solid-svg-icons";
 import Button from "../button/page";
 
 interface UserFields {
@@ -34,6 +33,7 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
   const [userName, setUserName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const { isLoggedIn, username, setLoggedIn, setUsername } = useAuth();
+  const [showErrorMessages, setShowErrorMessages] = useState('');
 
   useEffect(() => {
     localStorage.setItem('isLoggedIn', String(isLoggedIn));
@@ -66,47 +66,57 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
         setUsername(userEntry.sys.id);
 
       } else {
-        console.log('invalid username or password');
+        setShowErrorMessages('Invalid username or password. Try again!');
       }
     } catch (error) {
       console.error('Error during login:', error);
     }
   };
 
+  // Function to clear error message when user starts typing again
+  const handleInputChange = () => {
+    setShowErrorMessages('');
+  };
 
   return (
-         <div className="login-container">
-            <h1 className="login-heading">Log In</h1>
-            <div className="input-container">
-            <div className="icon-container">
-              <FontAwesomeIcon icon={faUser} />
-            </div>
-              <input
-                type="text"
-                placeholder="Username"
-                className="username-input"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="input-container">
-              <input
-                type="password"
-                placeholder="Password"
-                className="password-input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <div className="icon-container">
-              <FontAwesomeIcon icon={faLock} />
-            </div>
-            </div>
-
-            <div className="submit-button"><Button setClickedButton={handleSubmit} name={"Log In"} path={""}></Button></div>
-            <button onClick={toggleSignUp}>Don&apos;t have an account? Sign up here!</button>
-          </div>
+    <div className="w-[400px] absolute top-1/2 right-20 transform -translate-y-1/2 bg-gray-200 bg-opacity-90 p-10 text-center rounded-[40px]">
+      <h1 className="text-custom-main-color text-5xl mb-5">Log In</h1>
+      <div className="flex align-center">
+        <div className="text-4xl text-custom-main-color mr-5 mt-5">
+          <FontAwesomeIcon icon={faUser} />
+        </div>
+        <input
+          type="text"
+          placeholder="Username"
+          className="w-full h-[40px] p-5 font-normal box-border mb-5 mt-5 border border-gray-300 rounded-full"
+          value={userName}
+          onChange={(e) => {
+            setUserName(e.target.value);
+            handleInputChange(); // Clear error message on input change
+          }}
+          required
+        />
+      </div>
+      <div className="flex align-center">
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full h-[40px] p-5 font-normal box-border mb-5 mt-5 border border-gray-300 rounded-full"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            handleInputChange(); // Clear error message on input change
+          }}
+          required
+        />
+        <div className="text-4xl text-custom-main-color ml-5 mt-5">
+          <FontAwesomeIcon icon={faLock} />
+        </div>
+      </div>
+      {showErrorMessages && <div className="text-red-500 text-lg"><FontAwesomeIcon icon={faExclamationCircle} className="cursor-pointer text-red-500 text- mr-5" />{showErrorMessages}</div>}
+      <div className="m-10"><Button setClickedButton={handleSubmit} name={"Log In"} path={""}></Button></div>
+      <button onClick={toggleSignUp}>Don&apos;t have an account? Sign up here!</button>
+    </div>
   );
 };
 

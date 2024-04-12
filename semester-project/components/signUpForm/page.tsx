@@ -1,10 +1,10 @@
 'use client'
 import { createClient, Entry } from 'contentful-management';
 import { useState } from 'react';
-import "../logInForm/logInPage.css";
 import Button from '../button/page';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faTimes, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faExclamationCircle, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '@/app/AuthContext';
 
 interface UserFields {
   userName: string;
@@ -37,8 +37,10 @@ const addUser = async (newEntryData: UserFields) => {
   
       // Publish the created entry
       await createdUser.publish();
-  
+
       console.log('New entry created and published:', createdUser);
+
+      return createdUser.sys.id;
     } catch (error) {
       console.error('Error creating or publishing new entry:', error);
       throw error;
@@ -55,13 +57,11 @@ interface SignUpFormProps {
     const [uniqueUserNameError, setUniqueUserNameError] = useState(false);
     const [passwordError, setPasswordError] = useState<string>('');
     const [showErrorMessages, setShowErrorMessages] = useState(true);
+    const { isLoggedIn, username, setLoggedIn, setUsername } = useAuth();
   
     const isPasswordValid = password.length < 6;
   
-    const handleCloseErrorMessages = () => {
-      setShowErrorMessages(false);
-    };
-  
+
     const handleSubmit = async () => {
       try {
         setUniqueUserNameError(false);
@@ -69,69 +69,70 @@ interface SignUpFormProps {
   
         if (isPasswordValid) {
           setPasswordError('Password is too short. Please use at least six characters.');
-          setShowErrorMessages(true); // Show error messages again on new submission attempt
+          setShowErrorMessages(true); 
           return;
         }
   
-        await addUser({ userName, password });
+        const createdUsername = await addUser({ userName, password });
         setUserName('');
         setPassword('');
-        setShowErrorMessages(true); // Reset the error messages visibility on successful submission
+        setShowErrorMessages(true); 
+        setLoggedIn(true);
+        setUsername(createdUsername);
       } catch (error) {
         console.error('Error submitting comment:', error);
         setUniqueUserNameError(true);
-        setShowErrorMessages(true); // Reset the error messages visibility on submission error
+        setShowErrorMessages(true); 
       }
     };
   
     return (
       <main>
-        <div className="login-page">
-          <div className="login-container">
-            {showErrorMessages && uniqueUserNameError && (
-              <div className="error message">
-                The Username is already taken. Try another one.
-                <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={handleCloseErrorMessages} />
-              </div>
-            )}
-            {showErrorMessages && passwordError && (
-              <div className="error message">
-                {passwordError}
-                <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={handleCloseErrorMessages} />
-              </div>
-            )}
-            <h1 className="login-heading">Sign Up</h1>
-            <div className="input-container">
-            <div className="icon-container">
+          <div className="w-[400px] absolute top-1/2 right-20 transform -translate-y-1/2 bg-gray-200 bg-opacity-90 p-10 text-center rounded-[40px]">
+            <h1 className="text-custom-main-color text-5xl mb-5">Sign Up</h1>
+            <div className="flex align-center">
+            <div className="text-4xl text-custom-main-color mr-5 mt-5">
               <FontAwesomeIcon icon={faUser} />
             </div>
               <input
                 type="text"
                 placeholder="Username"
-                className="username-input"
+                className="w-full h-[40px] p-5 font-normal box-border mb-5 mt-5 border border-gray-300 rounded-full"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
                 required
               />
             </div>
-            <div className="input-container">
+            {showErrorMessages && uniqueUserNameError && (
+              <div className="text-red-500 text-lg">
+                <FontAwesomeIcon icon={faExclamationCircle} className="cursor-pointer text-red-500 text- mr-5" />
+                The Username is already taken. Try another one.
+                
+              </div>
+            )}
+            <div className="flex align-center">
               <input
                 type="password"
                 placeholder="Password"
-                className="password-input"
+                className="w-full h-[40px] p-5 font-normal box-border mb-5 mt-5 border border-gray-300 rounded-full"
                 value = {password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <div className="icon-container">
+              <div className="text-4xl text-custom-main-color ml-5 mt-5">
               <FontAwesomeIcon icon={faLock} />
             </div>
             </div>
+            {showErrorMessages && passwordError && (
+              <div className="text-red-500 text-lg">
+                <FontAwesomeIcon icon={faExclamationCircle} className="cursor-pointer text-red-500 text- mr-5" />
+                {passwordError}
+              </div>
+            )}
   
-            <div className="submit-button"><Button setClickedButton={handleSubmit} name={"Sign Up"} path={''}></Button></div>
+            <div className="m-10"><Button setClickedButton={handleSubmit} name={"Sign Up"} path={''}></Button></div>
             <button onClick={toggleSignUp}>Already have an account? Sign up here!</button>
           </div>
-        </div>
       </main>
     );
   };

@@ -1,9 +1,10 @@
 'use client'
 import CommentForm from '@/components/addComment/page';
 import React, { useState, useEffect } from 'react';
-import "./recipesDetails.css";
 import renderStars from "@/components/stars/page";
 import RecentRecipes from '@/components/recentRecipes/page';
+import Loading from '@/components/loading/page';
+import NotFound from '@/components/notFound/page';
 
 interface Params {
   id: number;
@@ -85,7 +86,7 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
   if (loading) {
     return (
       <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <p>Loading...</p>
+        <Loading/>
       </main>
     );
   }
@@ -93,43 +94,43 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
   if (!entry) {
     return (
       <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <p>Recipe not found.</p>
+        <NotFound/>
       </main>
     );
   }
 
   return (
-    <main className = "main-container">
-      <div className="main-information">
-              <div className="pageimage">
+    <main className = "flex flex-col align-stretch">
+      <div className="w-full h-100 flex m-0 flex-nowrap">
+              <div className="w-1/2 h-screen mt-[-100px]" style={{ clipPath: 'polygon(0 0, 100% 0, 60% 100%, 0% 100%)' }}>
                 {entry.fields.postimage?.fields?.file?.url ? (
-                  <img src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
+                  <img className = "w-full h-full object-cover"src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
                 ) : (
                   <span>No Image</span>
                 )}
               </div>
-        <div className="recipe-details" key={entry?.sys.id}>
-                <h1 className="title">{entry?.fields.name}</h1>
-                <div className="star-rating">{renderStars(entry.fields.rating)}</div>
-                <h3>{entry?.fields.description}</h3>
-                <div className="display">
-                  <div className="display-line">
-                    <p className="first-line">{entry?.fields.cookingTime}</p>
-                    <p className="second-line">mins</p>
+        <div className="relative w-1/2" key={entry?.sys.id}>
+                <h1 className="text-custom-main-color text-6xl font-bold mt-10">{entry?.fields.name}</h1>
+                <div>{renderStars(entry.fields.rating)}</div>
+                <div className = "text-lg text-font-color mr-20 mt-10">{entry?.fields.description}</div>
+                <div className="flex flex-wrap mt-[50px] mb-[100px]">
+                  <div className="flex flex-col w-1/3 box-border border-r border-custom-main-color mt-50 pl-10">
+                    <p className="text-custom-main-color text-6xl text-left">{entry?.fields.cookingTime}</p>
+                    <p className="text-center mt-2">mins</p>
                   </div>
-                  <div className="display-line">
-                    <p className="first-line">{entry?.fields.nutritions}</p>
-                    <p className="second-line">nutritions</p>
+                  <div className="flex flex-col w-1/3 box-border border-r border-custom-main-color mt-50 pl-10">
+                    <p className="text-custom-main-color text-6xl text-left">{entry?.fields.nutritions}</p>
+                    <p className="text-center mt-2">nutritions</p>
                   </div>
-                  <div className="display-line">
-                    <p className="first-line">{entry?.fields.ingredients.length}</p>
-                    <p className="second-line">ingredients</p>
+                  <div className="flex flex-col w-1/3 mt-50 pl-10">
+                    <p className="text-custom-main-color text-6xl text-left">{entry?.fields.ingredients.length}</p>
+                    <p className="text-center mt-2">ingredients</p>
                   </div>
                 </div>
-                <div className="diet">
-                  <p className="diet-title">Dietary preferences</p>
+                <div className="flex">
+                  <p className="text-custom-main-color font-bold text-lg mr-10">Dietary preferences:</p>
                   {entry?.fields.diet.map((preference, index) => (
-                    <p className="preference" key={index}>{preference}</p>
+                    <p className="rounded-full bg-custom-main-color text-white p-1" key={index}>{preference}</p>
                   ))}
                 </div>
         </div>

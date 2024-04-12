@@ -6,24 +6,24 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '@/app/AuthContext';
 
 interface Recipe {
-    sys: {
-      id: string;
-    };
-    fields: RecipeFields;
-  }
+  sys: {
+    id: string;
+  };
+  fields: RecipeFields;
+}
 
 interface RecipeFields {
-    name: string;
-    category: string[];
-    diet: string[];
-    difficulty: string;
-    cookingTime: number;
-    ingredients: string[];
-    instructions: string;
-    postimage?: any;
-    comments: Comment[];
-    rating: number;
-  }
+  name: string;
+  category: string[];
+  diet: string[];
+  difficulty: string;
+  cookingTime: number;
+  ingredients: string[];
+  instructions: string;
+  postimage?: any;
+  comments: Comment[];
+  rating: number;
+}
 
 interface UserFields {
   userName: string;
@@ -62,7 +62,8 @@ export default function DisplaySavedRecipes() {
           const foundUser = userResponse.items[0];
           console.log('Found User:', foundUser.fields.userName);
           setUser(foundUser);
-          setRecipeCount(foundUser.fields.savedRecipes.length);
+          const savedRecipes = foundUser.fields.savedRecipes || [];
+          setRecipeCount(savedRecipes.length);
           console.log(foundUser.fields.savedRecipes);
         }
       } catch (error) {
@@ -87,8 +88,8 @@ export default function DisplaySavedRecipes() {
       <br />
       <br />
       <div className="recipe-container">
-      {user &&
-  user.fields.savedRecipes.map((recipe, index) => (
+      {user && user.fields && user.fields.savedRecipes && user.fields.savedRecipes.length > 0 ? (
+          user.fields.savedRecipes.map((recipe, index) => (
             <div key={index} className="recipe-box">
               <Link href={`/recipes/${recipe.fields.category}/${recipe.sys.id}`}>
                 {recipe.fields.postimage?.fields?.file?.url ? (
@@ -106,7 +107,10 @@ export default function DisplaySavedRecipes() {
                 </div>
               </Link>
             </div>
-          ))}
+          ))
+        ) : (
+          <div>No saved recipes found.</div>
+        )}
       </div>
     </main>
   );

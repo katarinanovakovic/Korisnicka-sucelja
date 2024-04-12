@@ -2,7 +2,6 @@
 body, main {
     margin:0; 
     padding:0;   
-    background-color:rgb(var(--background-start-rgb));
 }
 
 .main-container {
@@ -43,8 +42,6 @@ body, main {
     width: 50%;
     padding: 30px;
     background-color: #fff;
-    margin-top: var(--page-margin);
-    background-color: rgb(var(--background-start-rgb));
 }
 
 .title {

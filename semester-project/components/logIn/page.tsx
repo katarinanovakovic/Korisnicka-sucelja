@@ -61,7 +61,7 @@ const LogIn: React.FC = () => {
         <DisplaySavedRecipes />
       ) : (
         <main
-          className="main"
+          className="mt-[-100px] h-[101vh] flex justify-center items-center bg-cover"
           style={{
             backgroundImage: `url(${
               image.length > 0 && image[2].fields.image?.fields?.file?.url
