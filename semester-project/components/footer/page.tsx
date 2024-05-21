@@ -1,12 +1,14 @@
 'use client'
 import React from 'react';
 import './footer.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faInstagram, faTiktok } from '@fortawesome/free-brands-svg-icons';
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="footer-section">
-        <h1>HEALTHY
+        <h1 className='font-arial-rounded'>HEALTHY
           <br/>
           AND
           <br/>
@@ -27,16 +29,16 @@ const Footer: React.FC = () => {
         <h2>Social Media</h2>
         <div className="social-media">
           <div className="social-media-row">
-            <img src='https://i.pinimg.com/236x/f4/1e/2d/f41e2dab621c1ee5253cef74e3642fcf.jpg' alt='Instagram'></img>          
-            <p>@healthyandeasy</p>
+          <div><FontAwesomeIcon icon={faInstagram} /></div>
+              <p>healthyandeasy</p>
           </div>
           <div className='social-media-row'>
-            <img src='https://i.pinimg.com/236x/b5/9d/15/b59d15f1d09ebd9882cad4a448688aac.jpg' alt='Facebook'></img>
-            <p>Healthy And Easy</p>
+          <div><FontAwesomeIcon icon={faFacebook} /></div>
+                      <p>Healthy And Easy</p>
           </div>
           <div className='social-media-row'>
-            <img src='https://i.pinimg.com/564x/00/b5/c7/00b5c767f9d7903675033506787fc952.jpg' alt='TikTok'></img>
-            <p>HealtyAndEasy</p>
+          <div><FontAwesomeIcon icon={faTiktok} /></div>
+                      <p>HealtyAndEasy</p>
           </div>
         </div>
         </div>

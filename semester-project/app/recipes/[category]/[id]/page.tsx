@@ -2,9 +2,10 @@
 import CommentForm from '@/components/addComment/page';
 import React, { useState, useEffect } from 'react';
 import renderStars from "@/components/stars/page";
-import RecentRecipes from '@/components/recentRecipes/page';
 import Loading from '@/components/loading/page';
 import NotFound from '@/components/notFound/page';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface Params {
   id: number;
@@ -110,7 +111,7 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
                 )}
               </div>
         <div className="relative w-1/2" key={entry?.sys.id}>
-                <h1 className="text-custom-main-color text-6xl font-bold mt-10">{entry?.fields.name}</h1>
+                <h1 className="text-custom-main-color text-6xl font-bold mt-10 font-arial-rounded">{entry?.fields.name}</h1>
                 <div>{renderStars(entry.fields.rating)}</div>
                 <div className = "text-lg text-font-color mr-20 mt-10">{entry?.fields.description}</div>
                 <div className="flex flex-wrap mt-[50px] mb-[100px]">
@@ -130,37 +131,36 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
                 <div className="flex">
                   <p className="text-custom-main-color font-bold text-lg mr-10">Dietary preferences:</p>
                   {entry?.fields.diet.map((preference, index) => (
-                    <p className="rounded-full bg-custom-main-color text-white p-1" key={index}>{preference}</p>
+                    <p className="rounded-full bg-custom-main-color mr-4  text-white p-2" key={index}>{preference}</p>
                   ))}
                 </div>
         </div>
       </div>
-      <div className="secondary-information">
-                <ol className="instructions">
-                <p className="section-title" >Instructions:</p>
+      <div className="flex justify-around mt-8 mb-8">
+                <ol className="w-1/3  shadow-md rounded-3xl p-6 h-full">
+                <p className="text-3xl text-custom-main-color font-bold  flex justify-center mb-4" >Instructions</p>
                   {entry?.fields.instructions.map((instruction, index) => (
-                    <li className="instruction" key={index}>
-                      {index + 1}. {instruction}
+                    <li className="flex mb-2" key={index}>
+                      <div className='text-custom-main-color text-xl font-bold mr-2'>{index + 1}.</div> <div className='text-lg'>{instruction} </div> 
                       {index !== entry.fields.instructions.length - 1 && <br />}
                     </li>
                   ))}
                 </ol>
-              <div className="ingredients">
-              <div className="section-title">Ingredients:</div>
+              <div className="w-1/3 h-full shadow-md rounded-3xl  p-6">
+              <div className="text-3xl text-custom-main-color font-bold  flex justify-center mb-4">Ingredients</div>
               {entry?.fields.ingredients.map((ingredient, index) => (
-                  <p className="ingredient" key={index}>
-                    {ingredient}
+                  <p className="flex mb-8" key={index}>
+                    <div className='text-custom-main-color text-sm mr-4 '> <FontAwesomeIcon icon={faCircle} /></div>
+                    <div className='text-lg'>{ingredient} </div> 
                     {index !== entry.fields.ingredients.length - 1 && <br />}
                   </p>
                 ))}
+
               </div>
-      </div>
       <div className="comment-section">
-      <div className="recent-added-recipes"><RecentRecipes /></div>
-      <div className="comments">
-      <CommentForm recipeId={entry?.sys.id} />
-        <p className="section-title">Comments:</p>
-        <ul className="comments-list">
+      <div className="w-full  shadow-md rounded-3xl  p-6">
+        <p className="text-3xl text-custom-main-color font-bold  flex justify-center mb-2">Comments</p>
+        <ul className="mb-8">
           {entry?.fields.comments ? (
             entry.fields.comments.map((comment, index) => (
               <li key={index} className="comment-item">
@@ -171,8 +171,12 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
             <p>No comments available.</p>
           )}
         </ul>
+        <CommentForm recipeId={entry?.sys.id} />
+
       </div>
       </div>
+      </div>
+
   </main>
   );
 }

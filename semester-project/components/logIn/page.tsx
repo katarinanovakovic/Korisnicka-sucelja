@@ -5,6 +5,9 @@ import SignUpForm from '@/components/signUpForm/page';
 import { useAuth } from '@/app/AuthContext';
 import DisplaySavedRecipes from '../displaySavedRecipes/page';
 import Button from '../button/page';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser} from "@fortawesome/free-solid-svg-icons";
+import SearchBox from '../searchBox/page';
 
 interface Image {
   sys: {
@@ -28,6 +31,11 @@ const LogIn: React.FC = () => {
   const { isLoggedIn, username, setLoggedIn, setUsername } = useAuth();
   const [showSignUp, setShowSignUp] = useState(false);
   const [image, setImage] = useState<Image[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   function handleLogout() {
     setLoggedIn(false);
@@ -56,7 +64,11 @@ const LogIn: React.FC = () => {
 
   return (
     <div>
-      {isLoggedIn && <Button setClickedButton={handleLogout} name={"Logout"} path={''}></Button>}
+      {isLoggedIn && <div className='flex justify-between mt-8'>
+      <div className="ml-8"><SearchBox onSearch={handleSearch}/></div>
+      <div className="flex justify-end">
+          <FontAwesomeIcon icon={faUser} className="mt-2 text-custom-main-color text-2xl"/>
+        <Button setClickedButton={handleLogout} name={"Logout"} path={''}></Button></div></div>}
       {isLoggedIn ? (
         <DisplaySavedRecipes />
       ) : (

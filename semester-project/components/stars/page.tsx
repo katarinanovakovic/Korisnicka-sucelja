@@ -9,7 +9,7 @@ const renderStars = (rating: number) => {
     
     // Add yellow stars
     for (let i = 0; i < yellowStars; i++) {
-      stars.push(<span key={i} className="text-4xl text-custom-main-color">★</span>);
+      stars.push(<span key={i} className="text-4xl text-yellow-500">★</span>);
     }
   
     // Add empty stars

@@ -107,7 +107,7 @@ export default function RecipesCategories({ params }: RecipesCategoriesParams) {
 
   return (
     <main className="flex flex-col items-center min-h-screen max-w-6xl m-auto p-10">
-      <h1 className="text-7xl font-bold p-10 capitalize text-custom-main-color">{params.category} Recipes</h1>
+      <h1 className="text-7xl font-bold p-10 capitalize text-custom-main-color font-arial-rounded">{params.category} Recipes</h1>
       <div className="flex justify-between w-full">
     <SearchBox onSearch={handleSearch} />
     <div className="text-font-color text-xl">

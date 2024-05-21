@@ -43,7 +43,7 @@ const Aboutpage = () => {
         <main className = "flex flex-col bg-white">
             <div className="flex justify-between bg-white">
                 <div className="items-center">
-                    <div className="text-8xl font-bold mx-20 my-10 text-custom-main-color text-center">
+                    <div className="text-8xl font-bold mx-20 my-10 text-custom-main-color text-center font-arial-rounded">
                         ABOUT US 
                         <br/>
                     </div>
@@ -67,20 +67,20 @@ const Aboutpage = () => {
               </div>
               </div>
               <div className="flex justify-between bg-white gap-9 m-20">
-             < div className='w-[calc(33.33% - 20px] rounded-lg shadow-lg p-6'>
-             <h1 className = "text-3xl text-custom-main-color font-bold  flex justify-center">Healthy Living</h1>
+             < div className='w-1/3 rounded-3xl shadow-lg p-6'>
+             <h1 className = "text-3xl text-custom-main-color font-bold  flex justify-center font-arial-rounded">Healthy Living</h1>
                 <div className='p-10'>
                 Our website encourages healthy living. We believe that good health starts with what you eat, and our platform is designed to inspire and educate individuals on the benefits of nutritious eating, regular physical activity, and overall wellness.  
                 </div>
              </div>
-             < div className='w-[calc(33.33% - 20px] rounded-lg shadow-lg p-6'>
-             <h1 className = "text-3xl text-custom-main-color font-bold  flex justify-center">Offers Quality Recipes</h1>
+             < div className='w-1/3 rounded-3xl shadow-lg p-6'>
+             <h1 className = "text-3xl text-custom-main-color font-bold  flex justify-center font-arial-rounded">Offers Quality Recipes</h1>
                 <div className='p-10'>
                 We offer a selection of quality recipes that have been thoroughly tested and verified. Each recipe is crafted with care, using fresh and wholesome ingredients to ensure delicious results every time. Our goal is to provide our users with reliable and trustworthy recipes they can count on.
                 </div>
              </div>
-             < div className='w-[calc(33.33% - 20px] rounded-lg shadow-lg p-6'>
-             <h1 className = "text-3xl text-custom-main-color font-bold  flex justify-center">Encouraging Youth </h1>
+             < div className='w-1/3 rounded-3xl shadow-lg p-6'>
+             <h1 className = "text-3xl text-custom-main-color font-bold  flex justify-center font-arial-rounded">Encouraging Youth </h1>
                 <div className='p-10'>
                 At the heart of our mission is the desire to make healthy eating more accessible and appealing to young people. We understand the challenges that many youths face when it comes to making nutritious food choices, and we're committed to providing them with easy-to-follow recipes, practical tips, and engaging content that empowers them to embrace a healthier lifestyle with confidence.
                 </div>

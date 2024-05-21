@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+  font-family: 'Arial Rounded MT Bold';
+  src: local('Arial Rounded MT Bold');
+}
+
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 245, 245, 240;

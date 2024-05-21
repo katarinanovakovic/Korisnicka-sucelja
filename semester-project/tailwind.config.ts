@@ -22,6 +22,9 @@ const config: Config = {
         'custom-main-color': 'rgb(var(--main-color-rgb))',
         font: '#4C4E52',
       },
+      fontFamily: {
+        'arial-rounded': ['"Arial Rounded MT Bold"', 'sans-serif'],
+      },
     },
   },
   plugins: [],

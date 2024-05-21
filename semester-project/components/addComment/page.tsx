@@ -1,18 +1,17 @@
 import { createClient, Entry } from 'contentful-management';
-import { useState } from 'react';
 import addLinkToCommentsField from '../addCommentToRecipe/page';
-import { useAuth } from '@/app/AuthContext';
-import "./CommentForm.css";
+import { useAuth } from "@/app/AuthContext";
+import { useState } from 'react';
+import Button from '../button/page';
 
 interface CommentFields {
   author: string;
   text: string;
 }
 
-// Extend Entry interface to include publish method
 interface CustomComment extends Entry, CommentFields {}
 
-const addComment = async (newEntryData: CommentFields, recipeId:string) => {
+const addComment = async (newEntryData: CommentFields, recipeId: string) => {
   try {
     const client = createClient({
       accessToken: 'CFPAT-4W6YBvnHoi1ct3BxnnCqiFbWUX1KoRysY5B2rNoOoNE',
@@ -22,7 +21,6 @@ const addComment = async (newEntryData: CommentFields, recipeId:string) => {
     const environmentId = 'master';
     const contentTypeId = 'comment';
 
-    // Create a new entry with provided data
     const createdComment = (await (await (await client
       .getSpace(spaceId))
       .getEnvironment(environmentId))
@@ -33,7 +31,6 @@ const addComment = async (newEntryData: CommentFields, recipeId:string) => {
         },
       })) as unknown as CustomComment;
 
-    // Publish the created entry
     await createdComment.publish();
 
     console.log('New entry created and published:', createdComment);
@@ -43,21 +40,23 @@ const addComment = async (newEntryData: CommentFields, recipeId:string) => {
     throw error;
   }
 };
+
 type CommentFormProps = {
-    recipeId: string;
-  };
-  
-  // Use the updated type for CommentForm
+  recipeId: string;
+};
+
 const CommentForm: React.FC<CommentFormProps> = ({ recipeId }) => {
-  const {isLoggedIn, setLoggedIn} = useAuth();
-  const [author, setAuthor] = useState<string>('');
+  const { isLoggedIn, username } = useAuth();
   const [text, setText] = useState<string>('');
 
   const handleSubmit = async () => {
+    if (!username) {
+      console.error('No username found for the current user.');
+      return;
+    }
+
     try {
-      await addComment({ author, text }, recipeId);
-      // Reset form fields after successful submission
-      setAuthor('');
+      await addComment({ author: username, text }, recipeId);
       setText('');
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -66,25 +65,26 @@ const CommentForm: React.FC<CommentFormProps> = ({ recipeId }) => {
 
   return (
     <div className="form">
-      {isLoggedIn && <form>
-      <label>
-        Author:
-        <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} required />
-      </label>
-
-      <br />
-
-      <label>
-        Comment:
-        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} required />
-      </label>
-
-      <br />
-
-      <button type="button" onClick={handleSubmit}>
-        Submit Comment
-      </button>
-    </form>}
+      {isLoggedIn && (
+        <form>
+          <label>
+            Add Comment:
+            <br></br>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={1}
+              required
+              className="bg-custom-main-color text-white rounded-lg p-2"
+            />
+          </label>
+          <br />
+          <div className='flex justify-center mt-2'>
+          <Button  path={""} name='Submit' setClickedButton={handleSubmit}>
+          </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
