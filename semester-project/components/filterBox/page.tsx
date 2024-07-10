@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useEffect, useState } from 'react';
 import Button from '@/components/button/page';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -90,29 +90,29 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onFilterSubmit, onFilterUndo, onC
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 transform -translate-x-0 -translate-y-0 shadow-lg z-50 w-1/3 h-screen bg-custom-main-color box-border p-5" style={{ clipPath: 'polygon(0 0, 100% 0, 60% 100%, 0% 100%)' }} {...props}>
+    <div className="fixed top-0 left-0 w-full h-full overflow-y-auto xl:w-1/3 bg-custom-main-color box-border p-5 shadow-lg z-50 transform -translate-x-0 -translate-y-0 xl:clip-path-custom" {...props}>
       <div className="cursor-pointer float-right text-3xl font-bold text-white" onClick={onClose}>
-      <FontAwesomeIcon icon={faTimes}/>
+        <FontAwesomeIcon icon={faTimes} />
       </div>
       <div className="font-bold text-white text-2xl mt-10">
         <label>Diet: </label>
       </div>
-      <div className="grid grid-cols-2 gap-x-10 gap-y-4 mr-20 mt-5">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-2 md:pr-20">
         {diets.map((diet) => (
           <button
             key={diet}
-            className={`rounded-[60px] border-[3px] p-1 font-bold ${selectedDiets.includes(diet) ? 'bg-white text-custom-main-color' : 'border-white  text-white'}`}
+            className={`rounded-[60px] border-[3px] p-1 font-bold ${selectedDiets.includes(diet) ? 'bg-white text-custom-main-color' : 'border-white text-white'}`}
             onClick={() => handleDietToggle(diet)}
           >
             {diet}
           </button>
         ))}
       </div>
-      <br></br>
+      <br />
       <div className="font-bold text-white text-2xl mt-10">
         <label>Difficulty Level: </label>
       </div>
-      <select className="w-1/2 mt-4 rounded-2xl text-font-color" value={selectedDifficulty} onChange={(e) => handleDifficultySelect(e.target.value)}>
+      <select className="w-full md:w-1/2 mt-4 rounded-2xl text-font-color" value={selectedDifficulty} onChange={(e) => handleDifficultySelect(e.target.value)}>
         <option value="">Select Difficulty Level</option>
         {difficultyLevels.map((level) => (
           <option key={level} value={level}>
@@ -120,7 +120,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onFilterSubmit, onFilterUndo, onC
           </option>
         ))}
       </select>
-      <br></br>
+      <br />
       <div className="font-bold text-white text-2xl mt-10">
         <label>Maximum Cooking Time: </label>
       </div>
@@ -134,10 +134,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onFilterSubmit, onFilterUndo, onC
           value={maxCookingTime || 0}
           onChange={(e) => handleCookingTimeChange(Number(e.target.value))}
         />
-        <div className = "text-white">{maxCookingTime !== null ? `${maxCookingTime} minutes` : ""}</div>
+        <div className="text-white">{maxCookingTime !== null ? `${maxCookingTime} minutes` : ''}</div>
       </div>
-
-      <div className="w-1/2 flex justify-around mt-10 ">
+      <div className="w-full flex justify-around mt-10 md:pr-40">
         <Button onClick={handleSubmit} disabled={selectedDiets.length === 0 && !selectedDifficulty && maxCookingTime === null} path={''} name={'Apply'} setClickedButton={setClickedButton}></Button>
         <Button onClick={handleUndo} disabled={selectedDiets.length === 0 && !selectedDifficulty && maxCookingTime === null} path={''} name={'Reset'} setClickedButton={setClickedButton}></Button>
       </div>

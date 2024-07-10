@@ -1,4 +1,4 @@
-// AuthToggle.tsx
+
 import React from 'react';
 
 interface AuthToggleProps {

@@ -63,7 +63,7 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
 
       if (userEntry) {
         setLoggedIn(true);
-        setUsername(userEntry.sys.id);
+        setUsername(userEntry.fields.userName);
 
       } else {
         setShowErrorMessages('Invalid username or password. Try again!');
@@ -73,13 +73,12 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
     }
   };
 
-  // Function to clear error message when user starts typing again
   const handleInputChange = () => {
     setShowErrorMessages('');
   };
 
   return (
-    <div className="w-[400px] absolute top-1/2 right-20 transform -translate-y-1/2 bg-gray-200 bg-opacity-90 p-10 text-center rounded-[40px]">
+    <div className="w-[350px] xl:mt-0 justify-center items-center xl:absolute xl:top-1/2 xl:right-20 xl:transform xl:-translate-y-1/2 bg-gray-200 bg-opacity-90 p-10 text-center rounded-[40px]">
       <h1 className="text-custom-main-color text-5xl mb-5 font-arial-rounded">Log In</h1>
       <div className="flex align-center">
         <div className="text-4xl text-custom-main-color mr-5 mt-5">
@@ -92,7 +91,7 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
           value={userName}
           onChange={(e) => {
             setUserName(e.target.value);
-            handleInputChange(); // Clear error message on input change
+            handleInputChange(); 
           }}
           required
         />
@@ -105,7 +104,7 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-            handleInputChange(); // Clear error message on input change
+            handleInputChange(); 
           }}
           required
         />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Dropdown from '../dropdown/page';
 
@@ -14,6 +14,20 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive, setClickedButton }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 768); // Assuming small screens are defined as < 768px width
+    };
+    
+    checkScreenSize(); // Initial check
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
 
   const handleMouseOver = () => {
     setIsHovered(true);
@@ -54,11 +68,16 @@ const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive
     color: isActive ? 'rgb(var(--main-color-rgb))' : isHovered ? '#FFFFFF' : '#000000',
     border: isActive ? '2px solid rgb(var(--main-color-rgb))' : 'none',
     opacity: disabled ? '0.4' : '1',
-    width: '100px',
-    height: '40px',
+    padding: '4px',
     borderRadius: '20px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease, color 0.3s ease, border 0.3s ease'
+  };
+
+  const smallScreenButtonStyle: React.CSSProperties = {
+    backgroundColor: isActive ? 'rgb(var(--main-color-rgb))' : isHovered ? '#FFFFFF' : 'rgb(var(--main-color-rgb))',
+    color: isActive ? '#FFFFFF' : isHovered ? 'rgb(var(--main-color-rgb))' : '#FFFFFF',
+    border: isActive ? 'none' : '2px solid rgb(var(--main-color-rgb))',
   };
 
   return (
@@ -66,8 +85,9 @@ const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive
       <div className="relative">
         <Link href={path}>
           <button
+            className="sm:w-[100px] sm:h-[40px] rounded-full p-1"
             onClick={handleClick}
-            style={buttonStyle}
+            style={isSmallScreen ? smallScreenButtonStyle : buttonStyle}
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
             disabled={disabled}>

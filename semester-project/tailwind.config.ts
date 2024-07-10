@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      clipPath: {
+        'custom': 'polygon(0 0, 100% 0, 60% 100%, 0% 100%)',
+      },
       spacing: {
         '25p': '25%',
         '50p': '50%',
@@ -26,6 +29,11 @@ const config: Config = {
         'arial-rounded': ['"Arial Rounded MT Bold"', 'sans-serif'],
       },
     },
+  },
+  variants: {
+    extend: {
+      clipPath: ['responsive'],
+    }
   },
   plugins: [],
 }

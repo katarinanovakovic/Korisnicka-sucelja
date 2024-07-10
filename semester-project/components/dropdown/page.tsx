@@ -15,7 +15,7 @@ const Dropdown: React.FC<DropdownProps> = ({ showDropdown, onMouseOver, onMouseO
 
   return (
     <div className="absolute" onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
-      <ul className="bg-white rounded-[40px] p-3 flex flex-col items-center m-0">
+      <ul className="bg-custom-main-color md:bg-white rounded-[40px] p-3 flex flex-col items-center m-0">
         {categories.map((name) => (
           <li className = "m-2" key={name}>
             {name === "all" ? (

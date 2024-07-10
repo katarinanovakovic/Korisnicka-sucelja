@@ -1,7 +1,7 @@
 import { createClient } from 'contentful-management';
 
 const SPACE_ID = 'c2epmrmqiqap';
-const ACCESS_TOKEN = 'CFPAT-4W6YBvnHoi1ct3BxnnCqiFbWUX1KoRysY5B2rNoOoNE';
+const ACCESS_TOKEN = 'CFPAT-QXFBaRSWAPqGcusNzxri1ip36Am8ZUt8N7DPt188YFQ';
 
 const client = createClient({
   accessToken: ACCESS_TOKEN,

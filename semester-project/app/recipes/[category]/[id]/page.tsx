@@ -3,7 +3,7 @@ import CommentForm from '@/components/addComment/page';
 import React, { useState, useEffect } from 'react';
 import renderStars from "@/components/stars/page";
 import Loading from '@/components/loading/page';
-import NotFound from '@/components/notFound/page';
+import NotFoundPage from '../../../not-found';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -36,7 +36,7 @@ interface RecipeFields {
   ingredients: string[];
   instructions: string[];
   postimage?:any;
-  comments:Comment[];
+  comments?:Comment[];
   rating:number;
   nutritions: string;
   description:string;
@@ -95,87 +95,102 @@ export default function RecipsDetails({ params }: RecipesCategoriesParams) {
   if (!entry) {
     return (
       <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-        <NotFound/>
+        <NotFoundPage/>
       </main>
     );
   }
 
   return (
     <main className = "flex flex-col align-stretch">
-      <div className="w-full h-100 flex m-0 flex-nowrap">
-              <div className="w-1/2 h-screen mt-[-100px]" style={{ clipPath: 'polygon(0 0, 100% 0, 60% 100%, 0% 100%)' }}>
-                {entry.fields.postimage?.fields?.file?.url ? (
-                  <img className = "w-full h-full object-cover"src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
-                ) : (
-                  <span>No Image</span>
-                )}
-              </div>
-        <div className="relative w-1/2" key={entry?.sys.id}>
-                <h1 className="text-custom-main-color text-6xl font-bold mt-10 font-arial-rounded">{entry?.fields.name}</h1>
-                <div>{renderStars(entry.fields.rating)}</div>
-                <div className = "text-lg text-font-color mr-20 mt-10">{entry?.fields.description}</div>
-                <div className="flex flex-wrap mt-[50px] mb-[100px]">
-                  <div className="flex flex-col w-1/3 box-border border-r border-custom-main-color mt-50 pl-10">
-                    <p className="text-custom-main-color text-6xl text-left">{entry?.fields.cookingTime}</p>
-                    <p className="text-center mt-2">mins</p>
-                  </div>
-                  <div className="flex flex-col w-1/3 box-border border-r border-custom-main-color mt-50 pl-10">
-                    <p className="text-custom-main-color text-6xl text-left">{entry?.fields.nutritions}</p>
-                    <p className="text-center mt-2">nutritions</p>
-                  </div>
-                  <div className="flex flex-col w-1/3 mt-50 pl-10">
-                    <p className="text-custom-main-color text-6xl text-left">{entry?.fields.ingredients.length}</p>
-                    <p className="text-center mt-2">ingredients</p>
-                  </div>
-                </div>
-                <div className="flex">
-                  <p className="text-custom-main-color font-bold text-lg mr-10">Dietary preferences:</p>
-                  {entry?.fields.diet.map((preference, index) => (
-                    <p className="rounded-full bg-custom-main-color mr-4  text-white p-2" key={index}>{preference}</p>
-                  ))}
-                </div>
+      <div className="grid grid-cols-1 md:flex md:flex-nowrap md:items-start">
+  {/* Image Section */}
+  <div className="relative w-full md:w-1/2">
+    <div className="w-full h-[450px] md:h-screen md:mt-[-100px] md:clip-path-custom">
+      {entry.fields.postimage?.fields?.file?.url ? (
+        <img className="w-full h-full object-cover rounded-xl m-2 md:m-0" src={entry.fields.postimage.fields.file.url} alt={entry.fields.name} />
+      ) : (
+        <span>No Image</span>
+      )}
+    </div>
+  </div>
+  
+  {/* Content Section */}
+  <div className="w-full ml-4 md:w-1/2">
+    <div className="relative" key={entry?.sys.id}>
+      <h1 className="text-custom-main-color text-6xl xl:text-7xl font-bold mt-10 font-arial-rounded">{entry?.fields.name}</h1>
+      <div>{renderStars(entry.fields.rating)}</div>
+      <div className="text-lg text-font-color mr-20 mt-10">{entry?.fields.description}</div>
+      <div className="flex flex-wrap mt-5 md:mt-10 mb-10 md:mb-0">
+        <div className="flex flex-col w-full md:w-1/3 box-border border-r border-custom-main-color mt-5 md:mt-50 pl-10">
+          <p className="text-custom-main-color text-6xl text-left">{entry?.fields.cookingTime}</p>
+          <p className="text-center mt-2">mins</p>
+        </div>
+        <div className="flex flex-col w-full md:w-1/3 box-border border-r border-custom-main-color mt-5 md:mt-50 pl-10">
+          <p className="text-custom-main-color text-6xl text-left">{entry?.fields.nutritions}</p>
+          <p className="text-center mt-2">nutritions</p>
+        </div>
+        <div className="flex flex-col w-full md:w-1/3 mt-5 md:mt-50 pl-10">
+          <p className="text-custom-main-color text-6xl text-left">{entry?.fields.ingredients.length}</p>
+          <p className="text-center mt-2">ingredients</p>
         </div>
       </div>
-      <div className="flex justify-around mt-8 mb-8">
-                <ol className="w-1/3  shadow-md rounded-3xl p-6 h-full">
-                <p className="text-3xl text-custom-main-color font-bold  flex justify-center mb-4" >Instructions</p>
-                  {entry?.fields.instructions.map((instruction, index) => (
-                    <li className="flex mb-2" key={index}>
-                      <div className='text-custom-main-color text-xl font-bold mr-2'>{index + 1}.</div> <div className='text-lg'>{instruction} </div> 
-                      {index !== entry.fields.instructions.length - 1 && <br />}
-                    </li>
-                  ))}
-                </ol>
-              <div className="w-1/3 h-full shadow-md rounded-3xl  p-6">
-              <div className="text-3xl text-custom-main-color font-bold  flex justify-center mb-4">Ingredients</div>
-              {entry?.fields.ingredients.map((ingredient, index) => (
-                  <p className="flex mb-8" key={index}>
-                    <div className='text-custom-main-color text-sm mr-4 '> <FontAwesomeIcon icon={faCircle} /></div>
-                    <div className='text-lg'>{ingredient} </div> 
-                    {index !== entry.fields.ingredients.length - 1 && <br />}
-                  </p>
-                ))}
+      <div className="flex flex-wrap md:flex-nowrap mt-20">
+        <p className="text-custom-main-color font-bold text-lg mr-10">Dietary preferences:</p>
+        {entry?.fields.diet.map((preference, index) => (
+          <p className="rounded-full bg-custom-main-color mr-4 text-white p-2" key={index}>{preference}</p>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
 
-              </div>
-      <div className="comment-section">
-      <div className="w-full  shadow-md rounded-3xl  p-6">
-        <p className="text-3xl text-custom-main-color font-bold  flex justify-center mb-2">Comments</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 mb-8">
+  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+    <ol className="shadow-md rounded-3xl p-6 h-full">
+      <p className="text-3xl text-custom-main-color font-bold flex justify-center mb-4">Instructions</p>
+      {entry?.fields.instructions.map((instruction, index) => (
+        <li className="flex mb-2" key={index}>
+          <div className='text-custom-main-color text-xl font-bold mr-2'>{index + 1}.</div> 
+          <div className='text-lg'>{instruction}</div>
+          {index !== entry.fields.instructions.length - 1 && <br />}
+        </li>
+      ))}
+    </ol>
+  </div>
+  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+    <div className="shadow-md rounded-3xl p-6">
+      <p className="text-3xl text-custom-main-color font-bold flex justify-center mb-4">Ingredients</p>
+      {entry?.fields.ingredients.map((ingredient, index) => (
+        <p className="flex mb-8" key={index}>
+          <div className='text-custom-main-color text-sm mr-4 '><FontAwesomeIcon icon={faCircle} /></div>
+          <div className='text-lg'>{ingredient}</div>
+          {index !== entry.fields.ingredients.length - 1 && <br />}
+        </p>
+      ))}
+    </div>
+  </div>
+  <div className="col-span-1 md:col-span-2 lg:col-span-1">
+    <div className="comment-section">
+      <div className="shadow-md rounded-3xl p-6">
+        <p className="text-3xl text-custom-main-color font-bold flex justify-center mb-2">Comments</p>
         <ul className="mb-8">
-          {entry?.fields.comments ? (
-            entry.fields.comments.map((comment, index) => (
-              <li key={index} className="comment-item">
-                <strong>{comment.fields.author}:</strong> {comment.fields.text}
-              </li>
-            ))
-          ) : (
-            <p>No comments available.</p>
-          )}
-        </ul>
-        <CommentForm recipeId={entry?.sys.id} />
+  {entry?.fields.comments && Array.isArray(entry.fields.comments) && entry.fields.comments.length > 0 ? (
+    entry.fields.comments.map((comment, index) => (
+      <li key={index} className="comment-item">
+        {comment.fields && comment.fields.author && <strong>{comment.fields.author}:</strong>} {comment.fields && comment.fields.text}
+      </li>
+    ))
+  ) : (
+    <p>No comments available.</p>
+  )}
+</ul>
 
+        <CommentForm recipeId={entry?.sys.id} />
       </div>
-      </div>
-      </div>
+    </div>
+  </div>
+</div>
+
 
   </main>
   );

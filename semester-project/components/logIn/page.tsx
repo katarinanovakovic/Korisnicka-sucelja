@@ -64,16 +64,23 @@ const LogIn: React.FC = () => {
 
   return (
     <div>
-      {isLoggedIn && <div className='flex justify-between mt-8'>
-      <div className="ml-8"><SearchBox onSearch={handleSearch}/></div>
-      <div className="flex justify-end">
-          <FontAwesomeIcon icon={faUser} className="mt-2 text-custom-main-color text-2xl"/>
-        <Button setClickedButton={handleLogout} name={"Logout"} path={''}></Button></div></div>}
+      {isLoggedIn && <div className="flex flex-col md:flex-row justify-between mt-8">
+  <div className="w-full md:w-auto flex justify-center md:justify-start mb-4 md:mb-0">
+    <div className="hidden md:flex w-1/2 md:w-auto md:ml-8">
+      <SearchBox onSearch={handleSearch} />
+    </div>
+  </div>
+  <div className="flex justify-end items-center m-2">
+    <FontAwesomeIcon icon={faUser} className="mt-2 mr-2 text-custom-main-color text-2xl" />
+    <Button setClickedButton={handleLogout} name={"Logout"} path={''} />
+  </div>
+</div>
+}
       {isLoggedIn ? (
         <DisplaySavedRecipes />
       ) : (
         <main
-          className="mt-[-100px] h-[101vh] flex justify-center items-center bg-cover"
+          className="w-[105vw] h-[110vh] mt-[-100px] flex justify-center items-center bg-cover bg-center"
           style={{
             backgroundImage: `url(${
               image.length > 0 && image[2].fields.image?.fields?.file?.url

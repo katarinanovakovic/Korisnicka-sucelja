@@ -54,7 +54,7 @@ export default function DisplaySavedRecipes() {
       try {
         const userResponse = (await client.getEntries({
           content_type: 'user',
-          'sys.id': username,
+          'fields.userName': username,
           include: 2,
         })) as { items: User[] };
 
@@ -75,13 +75,13 @@ export default function DisplaySavedRecipes() {
   }, [username]);
 
   return (
-    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10">
-      <h1 className="text-7xl font-bold p-10 capitalize text-custom-main-color font-arial-rounded">
+    <main className="flex flex-col items-center min-h-screen max-w-5xl m-auto p-10 mt-[-50px] md:mt-0">
+      <h1 className="text-5xl md:text-7xl font-bold p-10 capitalize text-custom-main-color font-arial-rounded">
         Saved Recipes
       </h1>
-      <div className="flex justify-between w-full">
-        <div className="recipe-count ml-auto">
-          You have <span style={{ fontWeight: 'bold' }}>{recipeCount}</span> recipes to explore
+      <div className="flex justify-center w-full">
+        <div className="text-base md:text-2xl">
+          You have <span className="text-custom-main-color font-bold">{recipeCount}</span> recipes to explore
         </div>
       </div>
 

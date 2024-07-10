@@ -14,7 +14,7 @@ interface CustomComment extends Entry, CommentFields {}
 const addComment = async (newEntryData: CommentFields, recipeId: string) => {
   try {
     const client = createClient({
-      accessToken: 'CFPAT-4W6YBvnHoi1ct3BxnnCqiFbWUX1KoRysY5B2rNoOoNE',
+      accessToken: 'CFPAT-QXFBaRSWAPqGcusNzxri1ip36Am8ZUt8N7DPt188YFQ',
     });
     
     const spaceId = 'c2epmrmqiqap';
