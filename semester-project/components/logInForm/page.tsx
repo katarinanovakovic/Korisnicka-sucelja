@@ -63,7 +63,7 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
 
       if (userEntry) {
         setLoggedIn(true);
-        setUsername(userEntry.fields.userName);
+        setUsername(userEntry.sys.id);
 
       } else {
         setShowErrorMessages('Invalid username or password. Try again!');
