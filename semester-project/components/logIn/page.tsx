@@ -72,7 +72,7 @@ const LogIn: React.FC = () => {
   </div>
   <div className="flex justify-end items-center m-2">
     <FontAwesomeIcon icon={faUser} className="mt-2 mr-2 text-custom-main-color text-2xl" />
-    <Button setClickedButton={handleLogout} name={"Logout"} path={''} />
+    <Button setClickedButton={handleLogout} name={"Logout"} path={''}>Logout</Button>
   </div>
 </div>
 }

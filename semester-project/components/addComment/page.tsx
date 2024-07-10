@@ -80,7 +80,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ recipeId }) => {
           </label>
           <br />
           <div className='flex justify-center mt-2'>
-          <Button  path={""} name='Submit' setClickedButton={handleSubmit}>
+          <Button  path={""} name='Submit' setClickedButton={handleSubmit}>Submit
           </Button>
           </div>
         </form>

@@ -113,7 +113,7 @@ const LogInForm: React.FC<LogInFormProps> = ({ toggleSignUp }) => {
         </div>
       </div>
       {showErrorMessages && <div className="text-red-500 text-lg"><FontAwesomeIcon icon={faExclamationCircle} className="cursor-pointer text-red-500 text- mr-5" />{showErrorMessages}</div>}
-      <div className="m-10"><Button setClickedButton={handleSubmit} name={"Log In"} path={""}></Button></div>
+      <div className="m-10"><Button setClickedButton={handleSubmit} name={"Log In"} path={""}>Log In</Button></div>
       <button onClick={toggleSignUp}>Don&apos;t have an account? Sign up here!</button>
     </div>
   );

@@ -130,7 +130,7 @@ interface SignUpFormProps {
               </div>
             )}
   
-            <div className="m-10"><Button setClickedButton={handleSubmit} name={"Sign Up"} path={''}></Button></div>
+            <div className="m-10"><Button setClickedButton={handleSubmit} name={"Sign Up"} path={''}>Sign Up</Button></div>
             <button onClick={toggleSignUp}>Already have an account? Sign up here!</button>
           </div>
       </main>

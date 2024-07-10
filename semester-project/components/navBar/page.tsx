@@ -19,7 +19,7 @@ const NavBar = () => {
           <ul className="flex md:p-2 justify-around">
             {Object.entries(pages).map(([name, path]) => (
               <li className = "mx-4 my-1" key={name}>
-                <Button path={path} name={name} isActive={clickedButton === name} setClickedButton={setClickedButton}></Button>
+                <Button path={path} name={name} isActive={clickedButton === name} setClickedButton={setClickedButton}>{name}</Button>
               </li>
             ))}
           </ul>

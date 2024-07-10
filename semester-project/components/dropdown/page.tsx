@@ -19,9 +19,9 @@ const Dropdown: React.FC<DropdownProps> = ({ showDropdown, onMouseOver, onMouseO
         {categories.map((name) => (
           <li className = "m-2" key={name}>
             {name === "all" ? (
-              <Button path={`/recipes`} name={name} onClick={notifyParent} setClickedButton={setClickedButton}/>
+              <Button path={`/recipes`} name={name} onClick={notifyParent} setClickedButton={setClickedButton}>{name}</Button>
             ) : (
-              <Button path={`/recipes/${name}`} name={name} onClick={notifyParent} setClickedButton={setClickedButton}/>
+              <Button path={`/recipes/${name}`} name={name} onClick={notifyParent} setClickedButton={setClickedButton}>{name}</Button>
             )}
           </li>
         ))}

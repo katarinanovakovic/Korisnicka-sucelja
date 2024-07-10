@@ -137,8 +137,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onFilterSubmit, onFilterUndo, onC
         <div className="text-white">{maxCookingTime !== null ? `${maxCookingTime} minutes` : ''}</div>
       </div>
       <div className="w-full flex justify-around mt-10 md:pr-40">
-        <Button onClick={handleSubmit} disabled={selectedDiets.length === 0 && !selectedDifficulty && maxCookingTime === null} path={''} name={'Apply'} setClickedButton={setClickedButton}></Button>
-        <Button onClick={handleUndo} disabled={selectedDiets.length === 0 && !selectedDifficulty && maxCookingTime === null} path={''} name={'Reset'} setClickedButton={setClickedButton}></Button>
+        <Button onClick={handleSubmit} disabled={selectedDiets.length === 0 && !selectedDifficulty && maxCookingTime === null} path={''} name={'Apply'} setClickedButton={setClickedButton}>Apply</Button>
+        <Button onClick={handleUndo} disabled={selectedDiets.length === 0 && !selectedDifficulty && maxCookingTime === null} path={''} name={'Reset'} setClickedButton={setClickedButton}>Reset</Button>
       </div>
     </div>
   );

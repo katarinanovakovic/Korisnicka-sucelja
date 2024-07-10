@@ -9,9 +9,10 @@ interface ButtonProps {
   disabled?: boolean;
   isActive?: boolean;
   setClickedButton: (name: string) => void;
+  children: any;
 }
 
-const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive, setClickedButton }) => {
+const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive, setClickedButton, children }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -91,7 +92,7 @@ const Button: React.FC<ButtonProps> = ({ path, name, onClick, disabled, isActive
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
             disabled={disabled}>
-            {name}
+            {children || name} 
           </button>
         </Link>
         {(isHovered || isDropdownVisible) && name === 'Recipes' && (
